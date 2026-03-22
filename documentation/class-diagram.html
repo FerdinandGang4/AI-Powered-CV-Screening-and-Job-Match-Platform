@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Class Diagram</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 24px;
+      background: #f7f3eb;
+      color: #1f2937;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+    }
+    .page {
+      max-width: 1500px;
+      margin: 0 auto;
+      background: #fffdf8;
+      border: 1px solid #d8d2c8;
+      box-shadow: 0 20px 50px rgba(31, 41, 55, 0.12);
+      padding: 28px;
+    }
+    h1 {
+      margin: 0 0 10px;
+      font-size: 30px;
+    }
+    p {
+      margin: 0 0 18px;
+      color: #5b6472;
+      line-height: 1.6;
+    }
+    svg {
+      width: 100%;
+      height: auto;
+      display: block;
+      background: #fcfaf6;
+      border: 1px solid #e0dbd1;
+    }
+    .box {
+      fill: #eef8f5;
+      stroke: #6e9e95;
+      stroke-width: 2.2;
+      rx: 8;
+    }
+    .enum {
+      fill: #fff1dc;
+      stroke: #cfa867;
+      stroke-width: 2.2;
+      rx: 8;
+    }
+    .report {
+      fill: #e7f1ff;
+      stroke: #8ab0d6;
+      stroke-width: 2.2;
+      rx: 8;
+    }
+    .text-title {
+      font-size: 17px;
+      font-weight: 700;
+      fill: #1f2937;
+    }
+    .text-stereo {
+      font-size: 12px;
+      fill: #5b6472;
+      font-weight: 700;
+    }
+    .text-body {
+      font-size: 12px;
+      fill: #4b5563;
+    }
+    .edge {
+      stroke: #5b6472;
+      stroke-width: 2.2;
+      fill: none;
+    }
+    .dashed {
+      stroke-dasharray: 7 6;
+    }
+    .label {
+      font-size: 12px;
+      fill: #4b5563;
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <h1>Class Diagram</h1>
+    <p>Rendered overview of the core domain classes and their relationships for the AI-powered CV screening platform.</p>
+
+    <svg viewBox="0 0 1600 1080" role="img" aria-label="Class diagram for the CV screening platform">
+      <defs>
+        <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+          <path d="M0,0 L10,3 L0,6 Z" fill="#5b6472"></path>
+        </marker>
+      </defs>
+
+      <rect class="box" x="60" y="70" width="220" height="120"></rect>
+      <text class="text-stereo" x="170" y="96" text-anchor="middle">&lt;&lt;entity&gt;&gt;</text>
+      <text class="text-title" x="170" y="122" text-anchor="middle">Recruiter</text>
+      <text class="text-body" x="80" y="148">+ Id: Guid</text>
+      <text class="text-body" x="80" y="168">+ FullName: string</text>
+      <text class="text-body" x="80" y="188">+ Email: string</text>
+
+      <rect class="box" x="360" y="50" width="280" height="160"></rect>
+      <text class="text-stereo" x="500" y="76" text-anchor="middle">&lt;&lt;entity&gt;&gt;</text>
+      <text class="text-title" x="500" y="102" text-anchor="middle">JobPosting</text>
+      <text class="text-body" x="384" y="128">+ Id: Guid</text>
+      <text class="text-body" x="384" y="148">+ Title: string</text>
+      <text class="text-body" x="384" y="168">+ Department: string</text>
+      <text class="text-body" x="384" y="188">+ MinimumYearsExperience: int</text>
+
+      <rect class="box" x="720" y="70" width="270" height="145"></rect>
+      <text class="text-stereo" x="855" y="96" text-anchor="middle">&lt;&lt;entity&gt;&gt;</text>
+      <text class="text-title" x="855" y="122" text-anchor="middle">JobRequirement</text>
+      <text class="text-body" x="744" y="148">+ Id: Guid</text>
+      <text class="text-body" x="744" y="168">+ Name: string</text>
+      <text class="text-body" x="744" y="188">+ Weight: decimal</text>
+      <text class="text-body" x="744" y="208">+ IsMandatory: bool</text>
+
+      <rect class="box" x="70" y="300" width="250" height="150"></rect>
+      <text class="text-stereo" x="195" y="326" text-anchor="middle">&lt;&lt;entity&gt;&gt;</text>
+      <text class="text-title" x="195" y="352" text-anchor="middle">Candidate</text>
+      <text class="text-body" x="94" y="378">+ Id: Guid</text>
+      <text class="text-body" x="94" y="398">+ FullName: string</text>
+      <text class="text-body" x="94" y="418">+ Email: string</text>
+      <text class="text-body" x="94" y="438">+ TotalYearsExperience: decimal</text>
+
+      <rect class="box" x="390" y="290" width="240" height="150"></rect>
+      <text class="text-stereo" x="510" y="316" text-anchor="middle">&lt;&lt;entity&gt;&gt;</text>
+      <text class="text-title" x="510" y="342" text-anchor="middle">CvDocument</text>
+      <text class="text-body" x="414" y="368">+ Id: Guid</text>
+      <text class="text-body" x="414" y="388">+ FileName: string</text>
+      <text class="text-body" x="414" y="408">+ RawText: string</text>
+      <text class="text-body" x="414" y="428">+ ParsingStatus: string</text>
+
+      <rect class="box" x="700" y="300" width="245" height="145"></rect>
+      <text class="text-stereo" x="822" y="326" text-anchor="middle">&lt;&lt;entity&gt;&gt;</text>
+      <text class="text-title" x="822" y="352" text-anchor="middle">CandidateSkill</text>
+      <text class="text-body" x="724" y="378">+ SkillName: string</text>
+      <text class="text-body" x="724" y="398">+ YearsUsed: decimal</text>
+      <text class="text-body" x="724" y="418">+ LastUsedYear: int</text>
+
+      <rect class="box" x="1010" y="300" width="255" height="145"></rect>
+      <text class="text-stereo" x="1138" y="326" text-anchor="middle">&lt;&lt;entity&gt;&gt;</text>
+      <text class="text-title" x="1138" y="352" text-anchor="middle">WorkExperience</text>
+      <text class="text-body" x="1036" y="378">+ CompanyName: string</text>
+      <text class="text-body" x="1036" y="398">+ RoleTitle: string</text>
+      <text class="text-body" x="1036" y="418">+ Summary: string</text>
+
+      <rect class="box" x="1320" y="300" width="255" height="145"></rect>
+      <text class="text-stereo" x="1448" y="326" text-anchor="middle">&lt;&lt;entity&gt;&gt;</text>
+      <text class="text-title" x="1448" y="352" text-anchor="middle">CandidateProject</text>
+      <text class="text-body" x="1346" y="378">+ ProjectName: string</text>
+      <text class="text-body" x="1346" y="398">+ Technologies: string</text>
+      <text class="text-body" x="1346" y="418">+ BusinessDomain: string</text>
+
+      <rect class="box" x="1090" y="520" width="250" height="140"></rect>
+      <text class="text-stereo" x="1215" y="546" text-anchor="middle">&lt;&lt;entity&gt;&gt;</text>
+      <text class="text-title" x="1215" y="572" text-anchor="middle">EducationRecord</text>
+      <text class="text-body" x="1115" y="598">+ Institution: string</text>
+      <text class="text-body" x="1115" y="618">+ Degree: string</text>
+      <text class="text-body" x="1115" y="638">+ GraduationYear: int</text>
+
+      <rect class="report" x="360" y="560" width="320" height="190"></rect>
+      <text class="text-stereo" x="520" y="586" text-anchor="middle">&lt;&lt;aggregate&gt;&gt;</text>
+      <text class="text-title" x="520" y="612" text-anchor="middle">CandidateEvaluation</text>
+      <text class="text-body" x="385" y="638">+ OverallScore: decimal</text>
+      <text class="text-body" x="385" y="658">+ SkillScore: decimal</text>
+      <text class="text-body" x="385" y="678">+ ExperienceScore: decimal</text>
+      <text class="text-body" x="385" y="698">+ SemanticScore: decimal</text>
+      <text class="text-body" x="385" y="718">+ Recommendation: string</text>
+
+      <rect class="box" x="770" y="580" width="230" height="135"></rect>
+      <text class="text-stereo" x="885" y="606" text-anchor="middle">&lt;&lt;entity&gt;&gt;</text>
+      <text class="text-title" x="885" y="632" text-anchor="middle">SkillGap</text>
+      <text class="text-body" x="792" y="658">+ SkillName: string</text>
+      <text class="text-body" x="792" y="678">+ Severity: GapSeverity</text>
+      <text class="text-body" x="792" y="698">+ GapReason: string</text>
+
+      <rect class="box" x="1040" y="580" width="250" height="135"></rect>
+      <text class="text-stereo" x="1165" y="606" text-anchor="middle">&lt;&lt;entity&gt;&gt;</text>
+      <text class="text-title" x="1165" y="632" text-anchor="middle">MatchExplanation</text>
+      <text class="text-body" x="1064" y="658">+ Summary: string</text>
+      <text class="text-body" x="1064" y="678">+ Strengths: string</text>
+      <text class="text-body" x="1064" y="698">+ Weaknesses: string</text>
+
+      <rect class="report" x="360" y="850" width="280" height="140"></rect>
+      <text class="text-stereo" x="500" y="876" text-anchor="middle">&lt;&lt;report&gt;&gt;</text>
+      <text class="text-title" x="500" y="902" text-anchor="middle">RankingReport</text>
+      <text class="text-body" x="384" y="928">+ GeneratedAtUtc: DateTime</text>
+      <text class="text-body" x="384" y="948">+ TotalCandidates: int</text>
+      <text class="text-body" x="384" y="968">+ TopCandidateId: Guid</text>
+
+      <rect class="enum" x="1060" y="60" width="200" height="120"></rect>
+      <text class="text-stereo" x="1160" y="86" text-anchor="middle">&lt;&lt;enum&gt;&gt;</text>
+      <text class="text-title" x="1160" y="112" text-anchor="middle">RequirementType</text>
+      <text class="text-body" x="1084" y="138">Skill</text>
+      <text class="text-body" x="1084" y="158">Experience</text>
+      <text class="text-body" x="1084" y="178">Project / Education</text>
+
+      <rect class="enum" x="1320" y="60" width="220" height="120"></rect>
+      <text class="text-stereo" x="1430" y="86" text-anchor="middle">&lt;&lt;enum&gt;&gt;</text>
+      <text class="text-title" x="1430" y="112" text-anchor="middle">RequirementPriority</text>
+      <text class="text-body" x="1344" y="138">Low</text>
+      <text class="text-body" x="1344" y="158">Medium / High</text>
+      <text class="text-body" x="1344" y="178">Critical</text>
+
+      <rect class="enum" x="1340" y="580" width="180" height="120"></rect>
+      <text class="text-stereo" x="1430" y="606" text-anchor="middle">&lt;&lt;enum&gt;&gt;</text>
+      <text class="text-title" x="1430" y="632" text-anchor="middle">GapSeverity</text>
+      <text class="text-body" x="1364" y="658">Low</text>
+      <text class="text-body" x="1364" y="678">Medium</text>
+      <text class="text-body" x="1364" y="698">High</text>
+
+      <line class="edge" x1="280" y1="130" x2="360" y2="130"></line>
+      <text class="label" x="320" y="118">creates 1..*</text>
+
+      <line class="edge" x1="640" y1="140" x2="720" y2="140"></line>
+      <text class="label" x="680" y="128">defines 1..*</text>
+
+      <line class="edge" x1="195" y1="450" x2="195" y2="560"></line>
+      <line class="edge" x1="195" y1="560" x2="360" y2="640"></line>
+      <text class="label" x="218" y="534">receives evaluations</text>
+
+      <line class="edge" x1="320" y1="360" x2="390" y2="360"></line>
+      <text class="label" x="336" y="348">owns 1</text>
+
+      <line class="edge" x1="320" y1="375" x2="700" y2="375"></line>
+      <text class="label" x="495" y="364">has skills 0..*</text>
+
+      <line class="edge" x1="320" y1="390" x2="1010" y2="390"></line>
+      <text class="label" x="645" y="409">includes work history 0..*</text>
+
+      <line class="edge" x1="320" y1="405" x2="1320" y2="405"></line>
+      <text class="label" x="812" y="424">showcases projects 0..*</text>
+
+      <line class="edge" x1="250" y1="450" x2="1090" y2="590"></line>
+      <text class="label" x="740" y="542">completed education 0..*</text>
+
+      <line class="edge" x1="500" y1="210" x2="500" y2="560"></line>
+      <text class="label" x="516" y="406">evaluated against</text>
+
+      <line class="edge" x1="680" y1="650" x2="770" y2="650"></line>
+      <text class="label" x="706" y="638">identifies 0..*</text>
+
+      <line class="edge" x1="680" y1="680" x2="1040" y2="680"></line>
+      <text class="label" x="842" y="668">produces 1</text>
+
+      <line class="edge" x1="500" y1="750" x2="500" y2="850"></line>
+      <text class="label" x="514" y="810">ranks 1..*</text>
+
+      <line class="edge dashed" x1="990" y1="135" x2="1060" y2="120" marker-end="url(#arrow)"></line>
+      <line class="edge dashed" x1="990" y1="155" x2="1320" y2="120" marker-end="url(#arrow)"></line>
+      <text class="label" x="1090" y="222">uses enums</text>
+
+      <line class="edge dashed" x1="1000" y1="650" x2="1340" y2="640" marker-end="url(#arrow)"></line>
+    </svg>
+  </main>
+</body>
+</html>

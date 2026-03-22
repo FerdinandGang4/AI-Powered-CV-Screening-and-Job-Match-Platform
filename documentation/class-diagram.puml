@@ -1,0 +1,180 @@
+@startuml
+title AI-Powered CV Screening and Job Match Platform - Class Diagram
+
+skinparam backgroundColor #FFFDF8
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam roundCorner 8
+skinparam defaultFontName Segoe UI
+skinparam ArrowColor #5B6472
+skinparam ClassBorderColor #6E9E95
+skinparam ClassBackgroundColor #EEF8F5
+skinparam ClassFontColor #1F2937
+
+class Recruiter {
+  +Id: Guid
+  +FullName: string
+  +Email: string
+}
+
+class JobPosting {
+  +Id: Guid
+  +Title: string
+  +Department: string
+  +DescriptionText: string
+  +MinimumYearsExperience: int
+  +Location: string
+  +CreatedAtUtc: DateTime
+}
+
+class JobRequirement {
+  +Id: Guid
+  +RequirementType: RequirementType
+  +Name: string
+  +Priority: RequirementPriority
+  +Weight: decimal
+  +IsMandatory: bool
+}
+
+class Candidate {
+  +Id: Guid
+  +FullName: string
+  +Email: string
+  +Phone: string
+  +TotalYearsExperience: decimal
+  +CurrentLocation: string
+}
+
+class CvDocument {
+  +Id: Guid
+  +FileName: string
+  +ContentType: string
+  +StoragePath: string
+  +RawText: string
+  +UploadedAtUtc: DateTime
+  +ParsingStatus: string
+}
+
+class CandidateSkill {
+  +Id: Guid
+  +SkillName: string
+  +ProficiencyLevel: string
+  +YearsUsed: decimal
+  +LastUsedYear: int
+}
+
+class WorkExperience {
+  +Id: Guid
+  +CompanyName: string
+  +RoleTitle: string
+  +StartDate: DateTime
+  +EndDate: DateTime
+  +Summary: string
+}
+
+class CandidateProject {
+  +Id: Guid
+  +ProjectName: string
+  +Description: string
+  +Technologies: string
+  +BusinessDomain: string
+}
+
+class EducationRecord {
+  +Id: Guid
+  +Institution: string
+  +Degree: string
+  +FieldOfStudy: string
+  +GraduationYear: int
+}
+
+class CandidateEvaluation {
+  +Id: Guid
+  +OverallScore: decimal
+  +SkillScore: decimal
+  +ExperienceScore: decimal
+  +ProjectScore: decimal
+  +EducationScore: decimal
+  +SemanticScore: decimal
+  +Recommendation: string
+  +EvaluatedAtUtc: DateTime
+}
+
+class SkillGap {
+  +Id: Guid
+  +SkillName: string
+  +GapReason: string
+  +Severity: GapSeverity
+}
+
+class MatchExplanation {
+  +Id: Guid
+  +Summary: string
+  +Strengths: string
+  +Weaknesses: string
+  +Notes: string
+}
+
+class RankingReport {
+  +Id: Guid
+  +GeneratedAtUtc: DateTime
+  +TotalCandidates: int
+  +TopCandidateId: Guid
+}
+
+enum RequirementType {
+  Skill
+  Experience
+  Project
+  Education
+  Certification
+}
+
+enum RequirementPriority {
+  Low
+  Medium
+  High
+  Critical
+}
+
+enum GapSeverity {
+  Low
+  Medium
+  High
+}
+
+Recruiter "1" -- "0..*" JobPosting : creates >
+JobPosting "1" *-- "1..*" JobRequirement : defines >
+JobPosting "1" -- "0..*" CandidateEvaluation : evaluated against >
+
+Candidate "1" *-- "1" CvDocument : owns >
+Candidate "1" *-- "0..*" CandidateSkill : has >
+Candidate "1" *-- "0..*" WorkExperience : includes >
+Candidate "1" *-- "0..*" CandidateProject : showcases >
+Candidate "1" *-- "0..*" EducationRecord : completed >
+Candidate "1" -- "0..*" CandidateEvaluation : receives >
+
+CandidateEvaluation "1" --> "1" Candidate : candidate >
+CandidateEvaluation "1" --> "1" JobPosting : job >
+CandidateEvaluation "1" *-- "0..*" SkillGap : identifies >
+CandidateEvaluation "1" *-- "1" MatchExplanation : produces >
+
+RankingReport "1" o-- "1..*" CandidateEvaluation : ranks >
+RankingReport "1" --> "1" JobPosting : for role >
+
+JobRequirement ..> RequirementType
+JobRequirement ..> RequirementPriority
+SkillGap ..> GapSeverity
+
+note right of CandidateEvaluation
+  CandidateEvaluation is the scoring aggregate.
+  It combines rule-based matching and AI-assisted
+  semantic analysis into one recruiter-facing result.
+end note
+
+note bottom of RankingReport
+  RankingReport orders evaluated candidates
+  for a single JobPosting.
+end note
+
+@enduml

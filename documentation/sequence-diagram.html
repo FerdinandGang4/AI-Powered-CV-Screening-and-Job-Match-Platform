@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sequence Diagram</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 24px;
+      background: #f7f3eb;
+      color: #1f2937;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+    }
+    .page {
+      max-width: 1500px;
+      margin: 0 auto;
+      background: #fffdf8;
+      border: 1px solid #d8d2c8;
+      box-shadow: 0 20px 50px rgba(31, 41, 55, 0.12);
+      padding: 28px;
+    }
+    h1 {
+      margin: 0 0 10px;
+      font-size: 30px;
+    }
+    p {
+      margin: 0 0 18px;
+      color: #5b6472;
+      line-height: 1.6;
+    }
+    svg {
+      width: 100%;
+      height: auto;
+      display: block;
+      background: #fcfaf6;
+      border: 1px solid #e0dbd1;
+    }
+    .lifeline {
+      stroke: #b7c4c2;
+      stroke-width: 2;
+      stroke-dasharray: 6 6;
+    }
+    .actor, .participant, .database {
+      stroke-width: 2.2;
+      rx: 8;
+    }
+    .actor {
+      fill: #e7f1ff;
+      stroke: #8ab0d6;
+    }
+    .participant {
+      fill: #eef8f5;
+      stroke: #6e9e95;
+    }
+    .database {
+      fill: #f8e7ef;
+      stroke: #c593a8;
+    }
+    .title {
+      font-size: 16px;
+      font-weight: 700;
+      fill: #1f2937;
+    }
+    .step {
+      font-size: 12px;
+      fill: #4b5563;
+    }
+    .arrow {
+      stroke: #5b6472;
+      stroke-width: 2.2;
+      fill: none;
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <h1>Sequence Diagram</h1>
+    <p>End-to-end request flow for uploading CVs, evaluating candidates, storing results, and returning a ranked dashboard view.</p>
+
+    <svg viewBox="0 0 1500 980" role="img" aria-label="Sequence diagram for candidate evaluation flow">
+      <defs>
+        <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+          <path d="M0,0 L10,3 L0,6 Z" fill="#5b6472"></path>
+        </marker>
+      </defs>
+
+      <rect class="actor" x="40" y="70" width="120" height="52"></rect>
+      <text class="title" x="100" y="102" text-anchor="middle">Recruiter</text>
+
+      <rect class="participant" x="220" y="70" width="170" height="52"></rect>
+      <text class="title" x="305" y="102" text-anchor="middle">Web App / API</text>
+
+      <rect class="participant" x="450" y="70" width="170" height="52"></rect>
+      <text class="title" x="535" y="102" text-anchor="middle">CV Parser</text>
+
+      <rect class="participant" x="680" y="70" width="170" height="52"></rect>
+      <text class="title" x="765" y="102" text-anchor="middle">AI / NLP</text>
+
+      <rect class="participant" x="910" y="70" width="170" height="52"></rect>
+      <text class="title" x="995" y="102" text-anchor="middle">Matching Engine</text>
+
+      <rect class="database" x="1140" y="70" width="140" height="52"></rect>
+      <text class="title" x="1210" y="102" text-anchor="middle">Storage</text>
+
+      <rect class="participant" x="1320" y="70" width="140" height="52"></rect>
+      <text class="title" x="1390" y="102" text-anchor="middle">Explainer</text>
+
+      <line class="lifeline" x1="100" y1="122" x2="100" y2="920"></line>
+      <line class="lifeline" x1="305" y1="122" x2="305" y2="920"></line>
+      <line class="lifeline" x1="535" y1="122" x2="535" y2="920"></line>
+      <line class="lifeline" x1="765" y1="122" x2="765" y2="920"></line>
+      <line class="lifeline" x1="995" y1="122" x2="995" y2="920"></line>
+      <line class="lifeline" x1="1210" y1="122" x2="1210" y2="920"></line>
+      <line class="lifeline" x1="1390" y1="122" x2="1390" y2="920"></line>
+
+      <line class="arrow" x1="100" y1="180" x2="305" y2="180" marker-end="url(#arrow)"></line>
+      <text class="step" x="178" y="170">1. Upload job description and CV files</text>
+
+      <line class="arrow" x1="305" y1="250" x2="1210" y2="250" marker-end="url(#arrow)"></line>
+      <text class="step" x="640" y="240">2. Save raw files</text>
+
+      <line class="arrow" x1="305" y1="320" x2="535" y2="320" marker-end="url(#arrow)"></line>
+      <text class="step" x="372" y="310">3. Parse uploaded CVs</text>
+
+      <line class="arrow" x1="535" y1="390" x2="305" y2="390" marker-end="url(#arrow)"></line>
+      <text class="step" x="362" y="380">4. Return parsed text</text>
+
+      <line class="arrow" x1="305" y1="460" x2="765" y2="460" marker-end="url(#arrow)"></line>
+      <text class="step" x="470" y="450">5. Extract skills, projects, experience, education</text>
+
+      <line class="arrow" x1="765" y1="530" x2="305" y2="530" marker-end="url(#arrow)"></line>
+      <text class="step" x="432" y="520">6. Return candidate profile</text>
+
+      <line class="arrow" x1="305" y1="600" x2="995" y2="600" marker-end="url(#arrow)"></line>
+      <text class="step" x="555" y="590">7. Evaluate candidate against job posting</text>
+
+      <line class="arrow" x1="995" y1="670" x2="1210" y2="670" marker-end="url(#arrow)"></line>
+      <text class="step" x="1038" y="660">8. Save scores and evaluation data</text>
+
+      <line class="arrow" x1="995" y1="740" x2="305" y2="740" marker-end="url(#arrow)"></line>
+      <text class="step" x="530" y="730">9. Return CandidateEvaluation</text>
+
+      <line class="arrow" x1="305" y1="810" x2="1390" y2="810" marker-end="url(#arrow)"></line>
+      <text class="step" x="710" y="800">10. Generate explanation and gaps</text>
+
+      <line class="arrow" x1="1390" y1="880" x2="305" y2="880" marker-end="url(#arrow)"></line>
+      <text class="step" x="700" y="870">11. Return explanation for ranked dashboard</text>
+    </svg>
+  </main>
+</body>
+</html>

@@ -1,0 +1,39 @@
+@startuml
+title Candidate Evaluation Flow - Sequence Diagram
+
+skinparam backgroundColor #FFFDF8
+skinparam shadowing false
+skinparam defaultFontName Segoe UI
+skinparam ArrowColor #5B6472
+skinparam ParticipantBorderColor #6E9E95
+skinparam ParticipantBackgroundColor #EEF8F5
+skinparam ActorBorderColor #8AB0D6
+skinparam ActorBackgroundColor #E7F1FF
+skinparam SequenceLifeLineBorderColor #B7C4C2
+skinparam SequenceLifeLineBackgroundColor #FAF8F3
+
+actor Recruiter
+participant "ASP.NET Web App / API" as WebApp
+participant "CV Parsing Service" as Parser
+participant "AI / NLP Extraction" as NLP
+participant "Matching Engine" as Matcher
+database "Storage" as Storage
+participant "Explanation Generator" as Explainer
+participant "Recruiter Dashboard" as Dashboard
+
+Recruiter -> WebApp : Upload job description and CV files
+WebApp -> Storage : Save raw files
+WebApp -> Parser : Parse uploaded CVs
+Parser --> WebApp : Parsed CV text
+WebApp -> NLP : Extract candidate profile data
+NLP --> WebApp : Skills, projects, experience, education
+WebApp -> Matcher : Evaluate candidate against job posting
+Matcher -> Storage : Save scores and evaluation data
+Matcher --> WebApp : CandidateEvaluation result
+WebApp -> Explainer : Generate recruiter-friendly explanation
+Explainer --> WebApp : MatchExplanation and SkillGap list
+WebApp -> Storage : Save final evaluation report
+WebApp -> Dashboard : Build ranked candidate view
+Dashboard --> Recruiter : Show ranking, strengths, gaps, notes
+
+@enduml
