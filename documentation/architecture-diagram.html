@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI-Powered CV Screening Platform - Architecture Diagram</title>
+  <style>
+    :root {
+      --page-bg: #f2efe8;
+      --paper: #fffdf9;
+      --ink: #1f2937;
+      --muted: #5b6472;
+      --accent: #134e4a;
+      --accent-soft: #dbece9;
+      --line: #9db7b3;
+      --panel: #f8faf9;
+      --border: #d8d2c8;
+      --user: #e7f1ff;
+      --app: #e8f8f1;
+      --ai: #fff0d9;
+      --data: #f8e7ef;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 32px 16px;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(19, 78, 74, 0.08), transparent 32%),
+        linear-gradient(180deg, #f9f6f0 0%, var(--page-bg) 100%);
+    }
+
+    .page {
+      max-width: 980px;
+      margin: 0 auto;
+      background: var(--paper);
+      border: 1px solid var(--border);
+      box-shadow: 0 20px 60px rgba(31, 41, 55, 0.12);
+      padding: 52px 56px;
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+    }
+
+    h1 {
+      margin: 0 0 14px;
+      font-size: 32px;
+      line-height: 1.2;
+    }
+
+    .intro {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 16px;
+    }
+
+    .diagram-wrap {
+      margin-top: 28px;
+      padding: 18px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+    }
+
+    svg {
+      width: 100%;
+      height: auto;
+      display: block;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+    }
+
+    h2 {
+      margin: 32px 0 12px;
+      font-size: 21px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px 18px;
+    }
+
+    .card {
+      border: 1px solid var(--border);
+      background: #fff;
+      padding: 14px 16px;
+    }
+
+    .card h3 {
+      margin: 0 0 8px;
+      font-size: 17px;
+      color: var(--accent);
+    }
+
+    .card p {
+      margin: 0;
+      line-height: 1.65;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .footer {
+      margin-top: 28px;
+      border-top: 1px solid var(--border);
+      padding-top: 14px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    @media (max-width: 760px) {
+      .page {
+        padding: 32px 24px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media print {
+      body {
+        padding: 0;
+        background: #fff;
+      }
+
+      .page {
+        max-width: none;
+        margin: 0;
+        border: none;
+        box-shadow: none;
+        padding: 0.45in 0.55in;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <p class="eyebrow">System Design</p>
+    <h1>Architecture Diagram</h1>
+    <p class="intro">
+      This document presents the proposed high-level architecture for the AI-Powered CV Screening and
+      Job Match Platform. The design is modular so the platform can grow from a simple first release
+      into a scalable enterprise-ready recruitment solution.
+    </p>
+
+    <section class="diagram-wrap">
+      <svg viewBox="0 0 1100 760" role="img" aria-label="Architecture diagram for the CV screening platform">
+        <defs>
+          <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+            <path d="M0,0 L10,3 L0,6 Z" fill="#6b7280"></path>
+          </marker>
+        </defs>
+
+        <text x="550" y="36" text-anchor="middle" font-size="28" font-weight="700" fill="#1f2937">AI-Powered CV Screening and Job Match Platform</text>
+
+        <rect x="70" y="90" rx="4" ry="4" width="240" height="96" fill="#e7f1ff" stroke="#8ab0d6" stroke-width="3"></rect>
+        <text x="190" y="118" text-anchor="middle" font-size="15" font-weight="700" fill="#4b5563">&lt;&lt;actor&gt;&gt;</text>
+        <text x="190" y="148" text-anchor="middle" font-size="22" font-weight="700" fill="#1f2937">Recruiter</text>
+        <text x="190" y="172" text-anchor="middle" font-size="15" fill="#4b5563">Uploads JD and CV batch</text>
+
+        <rect x="410" y="78" rx="4" ry="4" width="280" height="128" fill="#e8f8f1" stroke="#84b7a8" stroke-width="3"></rect>
+        <text x="550" y="108" text-anchor="middle" font-size="15" font-weight="700" fill="#4b5563">&lt;&lt;component&gt;&gt;</text>
+        <text x="550" y="140" text-anchor="middle" font-size="22" font-weight="700" fill="#1f2937">ASP.NET Web App / API</text>
+        <text x="550" y="167" text-anchor="middle" font-size="15" fill="#4b5563">Authentication, upload endpoints,</text>
+        <text x="550" y="189" text-anchor="middle" font-size="15" fill="#4b5563">workflow orchestration, dashboard</text>
+
+        <rect x="790" y="90" rx="4" ry="4" width="240" height="96" fill="#f8e7ef" stroke="#c593a8" stroke-width="3"></rect>
+        <text x="910" y="118" text-anchor="middle" font-size="15" font-weight="700" fill="#4b5563">&lt;&lt;database&gt;&gt;</text>
+        <text x="910" y="148" text-anchor="middle" font-size="22" font-weight="700" fill="#1f2937">Storage</text>
+        <text x="910" y="172" text-anchor="middle" font-size="15" fill="#4b5563">Files, parsed data, scores</text>
+
+        <rect x="120" y="310" rx="4" ry="4" width="250" height="116" fill="#e8f8f1" stroke="#84b7a8" stroke-width="3"></rect>
+        <text x="245" y="340" text-anchor="middle" font-size="15" font-weight="700" fill="#4b5563">&lt;&lt;component&gt;&gt;</text>
+        <text x="245" y="372" text-anchor="middle" font-size="21" font-weight="700" fill="#1f2937">CV Parsing Service</text>
+        <text x="245" y="398" text-anchor="middle" font-size="15" fill="#4b5563">Extract text from PDF / DOCX</text>
+
+        <rect x="425" y="310" rx="4" ry="4" width="250" height="116" fill="#fff0d9" stroke="#d2ac67" stroke-width="3"></rect>
+        <text x="550" y="340" text-anchor="middle" font-size="15" font-weight="700" fill="#4b5563">&lt;&lt;service&gt;&gt;</text>
+        <text x="550" y="372" text-anchor="middle" font-size="21" font-weight="700" fill="#1f2937">AI / NLP Extraction</text>
+        <text x="550" y="398" text-anchor="middle" font-size="15" fill="#4b5563">Skills, experience, projects, gaps</text>
+
+        <rect x="730" y="310" rx="4" ry="4" width="250" height="116" fill="#e8f8f1" stroke="#84b7a8" stroke-width="3"></rect>
+        <text x="855" y="340" text-anchor="middle" font-size="15" font-weight="700" fill="#4b5563">&lt;&lt;component&gt;&gt;</text>
+        <text x="855" y="372" text-anchor="middle" font-size="21" font-weight="700" fill="#1f2937">Matching Engine</text>
+        <text x="855" y="398" text-anchor="middle" font-size="15" fill="#4b5563">Scoring and ranking logic</text>
+
+        <rect x="265" y="550" rx="4" ry="4" width="285" height="116" fill="#fff0d9" stroke="#d2ac67" stroke-width="3"></rect>
+        <text x="407" y="580" text-anchor="middle" font-size="15" font-weight="700" fill="#4b5563">&lt;&lt;service&gt;&gt;</text>
+        <text x="407" y="612" text-anchor="middle" font-size="21" font-weight="700" fill="#1f2937">Explanation Generator</text>
+        <text x="407" y="638" text-anchor="middle" font-size="15" fill="#4b5563">Strengths, missing skills, gap notes</text>
+
+        <rect x="600" y="550" rx="4" ry="4" width="285" height="116" fill="#e7f1ff" stroke="#8ab0d6" stroke-width="3"></rect>
+        <text x="742" y="580" text-anchor="middle" font-size="15" font-weight="700" fill="#4b5563">&lt;&lt;boundary&gt;&gt;</text>
+        <text x="742" y="612" text-anchor="middle" font-size="21" font-weight="700" fill="#1f2937">Recruiter Dashboard</text>
+        <text x="742" y="638" text-anchor="middle" font-size="15" fill="#4b5563">Ranked list, insights, actions</text>
+
+        <line x1="310" y1="138" x2="410" y2="138" stroke="#6b7280" stroke-width="3" marker-end="url(#arrow)"></line>
+        <text x="360" y="126" text-anchor="middle" font-size="14" fill="#4b5563">submits files</text>
+
+        <line x1="690" y1="138" x2="790" y2="138" stroke="#6b7280" stroke-width="3" marker-end="url(#arrow)"></line>
+        <text x="740" y="126" text-anchor="middle" font-size="14" fill="#4b5563">stores artifacts</text>
+
+        <line x1="550" y1="206" x2="550" y2="310" stroke="#6b7280" stroke-width="3" marker-end="url(#arrow)"></line>
+        <text x="566" y="266" font-size="14" fill="#4b5563">calls NLP pipeline</text>
+
+        <line x1="490" y1="206" x2="280" y2="310" stroke="#6b7280" stroke-width="3" marker-end="url(#arrow)"></line>
+        <text x="350" y="252" text-anchor="middle" font-size="14" fill="#4b5563">sends CV files</text>
+
+        <line x1="610" y1="206" x2="820" y2="310" stroke="#6b7280" stroke-width="3" marker-end="url(#arrow)"></line>
+        <text x="720" y="252" text-anchor="middle" font-size="14" fill="#4b5563">requests ranking</text>
+
+        <line x1="370" y1="368" x2="425" y2="368" stroke="#6b7280" stroke-width="3" marker-end="url(#arrow)"></line>
+        <text x="397" y="356" text-anchor="middle" font-size="14" fill="#4b5563">parsed text</text>
+
+        <line x1="675" y1="368" x2="730" y2="368" stroke="#6b7280" stroke-width="3" marker-end="url(#arrow)"></line>
+        <text x="702" y="356" text-anchor="middle" font-size="14" fill="#4b5563">candidate profile</text>
+
+        <line x1="550" y1="426" x2="442" y2="550" stroke="#6b7280" stroke-width="3" marker-end="url(#arrow)"></line>
+        <text x="482" y="492" text-anchor="middle" font-size="14" fill="#4b5563">fit analysis</text>
+
+        <line x1="855" y1="426" x2="742" y2="550" stroke="#6b7280" stroke-width="3" marker-end="url(#arrow)"></line>
+        <text x="820" y="500" text-anchor="middle" font-size="14" fill="#4b5563">ranking result</text>
+
+        <line x1="550" y1="368" x2="790" y2="186" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 8" marker-end="url(#arrow)"></line>
+        <text x="704" y="284" text-anchor="middle" font-size="14" fill="#4b5563">persists extracted fields</text>
+
+        <line x1="855" y1="368" x2="875" y2="186" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 8" marker-end="url(#arrow)"></line>
+        <text x="905" y="286" text-anchor="middle" font-size="14" fill="#4b5563">writes scores</text>
+
+        <line x1="742" y1="550" x2="860" y2="186" stroke="#6b7280" stroke-width="3" stroke-dasharray="8 8" marker-end="url(#arrow)"></line>
+        <text x="826" y="430" text-anchor="middle" font-size="14" fill="#4b5563">loads reports</text>
+
+        <line x1="600" y1="608" x2="550" y2="608" stroke="#6b7280" stroke-width="3" marker-end="url(#arrow)"></line>
+        <text x="575" y="596" text-anchor="middle" font-size="14" fill="#4b5563">explanations</text>
+      </svg>
+    </section>
+
+    <h2>Component Overview</h2>
+    <div class="grid">
+      <article class="card">
+        <h3>Recruiter Interface</h3>
+        <p>The front end allows recruiters to upload job descriptions and CVs, review ranked results, and inspect detailed explanations for each candidate.</p>
+      </article>
+      <article class="card">
+        <h3>ASP.NET Application Layer</h3>
+        <p>This layer handles API endpoints, workflow orchestration, validation, security, and communication between parsing, AI, matching, and reporting services.</p>
+      </article>
+      <article class="card">
+        <h3>CV Parsing Service</h3>
+        <p>The parser extracts text from uploaded files such as PDF and DOCX, cleans the content, and sends normalized text into the analysis pipeline.</p>
+      </article>
+      <article class="card">
+        <h3>AI / NLP Layer</h3>
+        <p>This layer extracts structured signals like skills, years of experience, projects, and semantic role fit to improve matching accuracy beyond keywords alone.</p>
+      </article>
+      <article class="card">
+        <h3>Matching and Ranking Engine</h3>
+        <p>The scoring engine compares candidate profiles against role requirements and produces weighted scores, ranking candidates from strongest to weakest match.</p>
+      </article>
+      <article class="card">
+        <h3>Explanation and Insights</h3>
+        <p>The reporting layer explains ranking outcomes by highlighting strengths, missing requirements, and gaps in skills or experience in recruiter-friendly language.</p>
+      </article>
+      <article class="card">
+        <h3>Database and File Storage</h3>
+        <p>Persistent storage keeps original files, extracted candidate data, job requirements, scoring history, and generated reports for later review.</p>
+      </article>
+      <article class="card">
+        <h3>Future Extensions</h3>
+        <p>The architecture supports later additions such as authentication, interview recommendation workflows, analytics, notifications, and recruiter collaboration features.</p>
+      </article>
+    </div>
+
+    <p class="footer">
+      This architecture is intended as a high-level design reference for the first implementation phase and can be refined into a detailed component diagram during development.
+    </p>
+  </main>
+</body>
+</html>
