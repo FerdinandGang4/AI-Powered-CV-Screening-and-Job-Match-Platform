@@ -1,0 +1,41 @@
+# Build output
+bin/
+obj/
+out/
+
+# User-specific files
+*.user
+*.rsuser
+*.suo
+*.userosscache
+*.sln.docstates
+
+# IDE folders
+.vs/
+.vscode/
+.idea/
+
+# Logs
+*.log
+logs/
+
+# ASP.NET runtime files
+appsettings.Development.json
+
+# NuGet
+packages/
+*.nupkg
+*.snupkg
+
+# Test and coverage output
+TestResults/
+coverage/
+*.coverage
+*.coveragexml
+
+# OS files
+Thumbs.db
+Desktop.ini
+
+# Generated local tooling folders
+.dotnet/
