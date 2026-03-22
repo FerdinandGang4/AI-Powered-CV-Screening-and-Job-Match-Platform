@@ -1,0 +1,193 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [ 3 0 R 5 0 R ] /Count 2 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 7 0 R >> >> /Contents 4 0 R >>
+endobj
+4 0 obj
+<< /Length 2185 >>
+stream
+BT
+/F1 12 Tf
+72 740 Td
+16 TL
+(AI-Powered CV Screening and Job Match Platform) Tj
+T*
+() Tj
+T*
+(Project Implementation Steps) Tj
+T*
+() Tj
+T*
+(1. Define scope and success criteria) Tj
+T*
+(Confirm the first release features, including job description upload, multiple CV uploads,) Tj
+T*
+(parsing, candidate evaluation, ranking, and explanation generation.) Tj
+T*
+() Tj
+T*
+(2. Design the system architecture) Tj
+T*
+(Separate the application into clear modules such as recruiter interface, backend services,) Tj
+T*
+(CV parsing, matching engine, data storage, and optional AI services.) Tj
+T*
+() Tj
+T*
+(3. Choose the ASP.NET project structure) Tj
+T*
+(Set up a clean solution using layered or modular architecture with presentation,) Tj
+T*
+(application, domain, infrastructure, and persistence components.) Tj
+T*
+() Tj
+T*
+(4. Model the core entities) Tj
+T*
+(Create the core domain models such as JobDescription, Candidate, CVDocument, Skill,) Tj
+T*
+(Experience, Project, MatchResult, and RankingReport.) Tj
+T*
+() Tj
+T*
+(5. Build file upload and storage) Tj
+T*
+(Implement secure upload support for job descriptions and CV files, including validation for) Tj
+T*
+(supported formats such as PDF and DOCX.) Tj
+T*
+() Tj
+T*
+(6. Implement CV parsing) Tj
+T*
+(Extract raw text from uploaded CV files, normalize the content, and prepare it for) Tj
+T*
+(structured analysis across different document layouts.) Tj
+T*
+() Tj
+T*
+(7. Extract structured candidate information) Tj
+T*
+(Identify and capture skills, years of experience, education, certifications, projects, and) Tj
+T*
+(other useful hiring signals from parsed CV content.) Tj
+T*
+() Tj
+T*
+(8. Process job descriptions) Tj
+T*
+(Analyze the job description to detect required skills, preferred qualifications, role) Tj
+T*
+(keywords, experience expectations, and important responsibilities.) Tj
+T*
+() Tj
+T*
+(9. Build the matching engine) Tj
+T*
+(Compare each candidate profile against job requirements using weighted scoring rules for) Tj
+T*
+(skills, experience, project relevance, and keyword alignment.) Tj
+T*
+() Tj
+T*
+(10. Add ranking explanations) Tj
+T*
+(Generate clear explanations showing why a candidate matches or falls short, including) Tj
+T*
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 7 0 R >> >> /Contents 6 0 R >>
+endobj
+6 0 obj
+<< /Length 1540 >>
+stream
+BT
+/F1 12 Tf
+72 740 Td
+16 TL
+(strengths, missing skills, and experience gaps.) Tj
+T*
+() Tj
+T*
+(11. Create the ranking and insights dashboard) Tj
+T*
+(Design a recruiter-facing interface to display ranked candidates, detailed score breakdowns,) Tj
+T*
+(strengths, gaps, and actionable insights.) Tj
+T*
+() Tj
+T*
+(12. Add AI-powered enhancements) Tj
+T*
+(Integrate AI capabilities to improve semantic CV understanding, flexible matching, and) Tj
+T*
+(natural-language explanations beyond simple keyword rules.) Tj
+T*
+() Tj
+T*
+(13. Persist results in the database) Tj
+T*
+(Store uploaded jobs, CVs, extracted candidate profiles, evaluation results, and ranking) Tj
+T*
+(reports for future access and comparison.) Tj
+T*
+() Tj
+T*
+(14. Add validation, logging, and error handling) Tj
+T*
+(Handle invalid uploads, parsing failures, duplicate documents, large batch processing, and) Tj
+T*
+(operational logging for maintainability.) Tj
+T*
+() Tj
+T*
+(15. Test the full workflow) Tj
+T*
+(Validate the end-to-end process, including upload, parsing, extraction, scoring accuracy,) Tj
+T*
+(ranking behavior, and edge-case handling.) Tj
+T*
+() Tj
+T*
+(16. Improve scalability and modularity) Tj
+T*
+(Prepare the platform for future expansion such as authentication, recruiter management,) Tj
+T*
+(analytics, interview recommendations, and advanced reporting.) Tj
+T*
+() Tj
+T*
+(17. Deploy and monitor the platform) Tj
+T*
+(Deploy the application, configure infrastructure, monitor performance, and track system) Tj
+T*
+(reliability and matching quality over time.) Tj
+T*
+ET
+endstream
+endobj
+7 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000123 00000 n 
+0000000249 00000 n 
+0000002485 00000 n 
+0000002611 00000 n 
+0000004202 00000 n 
+trailer
+<< /Size 8 /Root 1 0 R >>
+startxref
+4272
+%%EOF

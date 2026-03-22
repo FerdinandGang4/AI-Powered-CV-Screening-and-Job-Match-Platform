@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI-Powered CV Screening and Job Match Platform - Project Steps</title>
+  <style>
+    :root {
+      --page-bg: #f3efe7;
+      --paper: #fffdf8;
+      --ink: #1f2937;
+      --muted: #5b6472;
+      --accent: #0f4c5c;
+      --accent-soft: #d9e9ec;
+      --border: #d7d3cb;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 32px 16px;
+      font-family: Georgia, "Times New Roman", serif;
+      background:
+        radial-gradient(circle at top, rgba(15, 76, 92, 0.08), transparent 35%),
+        linear-gradient(180deg, #f8f4ee 0%, var(--page-bg) 100%);
+      color: var(--ink);
+    }
+
+    .page {
+      max-width: 900px;
+      margin: 0 auto;
+      background: var(--paper);
+      border: 1px solid var(--border);
+      box-shadow: 0 20px 60px rgba(31, 41, 55, 0.12);
+      padding: 56px 64px;
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      color: var(--accent);
+      font-size: 13px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 34px;
+      line-height: 1.2;
+    }
+
+    .subtitle {
+      margin: 16px 0 0;
+      font-size: 17px;
+      line-height: 1.7;
+      color: var(--muted);
+    }
+
+    .meta {
+      margin-top: 28px;
+      padding: 16px 18px;
+      border-left: 4px solid var(--accent);
+      background: var(--accent-soft);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    h2 {
+      margin: 40px 0 14px;
+      font-size: 22px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+    }
+
+    ol {
+      margin: 0;
+      padding-left: 24px;
+    }
+
+    li {
+      margin: 0 0 18px;
+      padding-left: 6px;
+    }
+
+    li strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 17px;
+    }
+
+    li span {
+      display: block;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    .footer {
+      margin-top: 40px;
+      padding-top: 18px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    @media print {
+      body {
+        padding: 0;
+        background: #ffffff;
+      }
+
+      .page {
+        max-width: none;
+        border: none;
+        box-shadow: none;
+        margin: 0;
+        padding: 0.5in 0.6in;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <p class="eyebrow">Project Documentation</p>
+    <h1>AI-Powered CV Screening and Job Match Platform</h1>
+    <p class="subtitle">
+      This document outlines the planned implementation steps for building an ASP.NET-based platform
+      that allows recruiters to upload job descriptions and multiple CVs, analyze candidate suitability,
+      and receive ranked results with explanations and gap insights.
+    </p>
+
+    <div class="meta">
+      <strong>Document Purpose:</strong> Provide a structured roadmap for delivering the first version
+      of the platform with scalable architecture, intelligent CV analysis, and recruiter-facing ranking insights.
+    </div>
+
+    <h2>Implementation Steps</h2>
+    <ol>
+      <li>
+        <strong>Define scope and success criteria</strong>
+        <span>Confirm the first release features, including job description upload, multiple CV uploads, parsing, candidate evaluation, ranking, and explanation generation.</span>
+      </li>
+      <li>
+        <strong>Design the system architecture</strong>
+        <span>Separate the application into clear modules such as recruiter interface, backend services, CV parsing, matching engine, data storage, and optional AI services.</span>
+      </li>
+      <li>
+        <strong>Choose the ASP.NET project structure</strong>
+        <span>Set up a clean solution using layered or modular architecture with presentation, application, domain, infrastructure, and persistence components.</span>
+      </li>
+      <li>
+        <strong>Model the core entities</strong>
+        <span>Create the core domain models such as JobDescription, Candidate, CVDocument, Skill, Experience, Project, MatchResult, and RankingReport.</span>
+      </li>
+      <li>
+        <strong>Build file upload and storage</strong>
+        <span>Implement secure upload support for job descriptions and CV files, including validation for supported formats such as PDF and DOCX.</span>
+      </li>
+      <li>
+        <strong>Implement CV parsing</strong>
+        <span>Extract raw text from uploaded CV files, normalize the content, and prepare it for structured analysis across different document layouts.</span>
+      </li>
+      <li>
+        <strong>Extract structured candidate information</strong>
+        <span>Identify and capture skills, years of experience, education, certifications, projects, and other useful hiring signals from parsed CV content.</span>
+      </li>
+      <li>
+        <strong>Process job descriptions</strong>
+        <span>Analyze the job description to detect required skills, preferred qualifications, role keywords, experience expectations, and important responsibilities.</span>
+      </li>
+      <li>
+        <strong>Build the matching engine</strong>
+        <span>Compare each candidate profile against job requirements using weighted scoring rules for skills, experience, project relevance, and keyword alignment.</span>
+      </li>
+      <li>
+        <strong>Add ranking explanations</strong>
+        <span>Generate clear explanations showing why a candidate matches or falls short, including strengths, missing skills, and experience gaps.</span>
+      </li>
+      <li>
+        <strong>Create the ranking and insights dashboard</strong>
+        <span>Design a recruiter-facing interface to display ranked candidates, detailed score breakdowns, strengths, gaps, and actionable insights.</span>
+      </li>
+      <li>
+        <strong>Add AI-powered enhancements</strong>
+        <span>Integrate AI capabilities to improve semantic CV understanding, flexible matching, and natural-language explanations beyond simple keyword rules.</span>
+      </li>
+      <li>
+        <strong>Persist results in the database</strong>
+        <span>Store uploaded jobs, CVs, extracted candidate profiles, evaluation results, and ranking reports for future access and comparison.</span>
+      </li>
+      <li>
+        <strong>Add validation, logging, and error handling</strong>
+        <span>Handle invalid uploads, parsing failures, duplicate documents, large batch processing, and operational logging for maintainability.</span>
+      </li>
+      <li>
+        <strong>Test the full workflow</strong>
+        <span>Validate the end-to-end process, including upload, parsing, extraction, scoring accuracy, ranking behavior, and edge-case handling.</span>
+      </li>
+      <li>
+        <strong>Improve scalability and modularity</strong>
+        <span>Prepare the platform for future expansion such as authentication, recruiter management, analytics, interview recommendations, and advanced reporting.</span>
+      </li>
+      <li>
+        <strong>Deploy and monitor the platform</strong>
+        <span>Deploy the application, configure infrastructure, monitor performance, and track system reliability and matching quality over time.</span>
+      </li>
+    </ol>
+
+    <p class="footer">
+      Prepared for project planning and implementation kickoff. This page is optimized for browser print
+      output and can be exported directly as a PDF document.
+    </p>
+  </main>
+</body>
+</html>
