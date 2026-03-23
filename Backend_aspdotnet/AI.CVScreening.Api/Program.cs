@@ -35,6 +35,7 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddSingleton<AppMemoryStore>();
 builder.Services.Configure<OpenAiOptions>(builder.Configuration.GetSection("OpenAI"));
+builder.Services.AddSingleton<IAuthService, InMemoryAuthService>();
 builder.Services.AddSingleton<IJobPostingService, InMemoryJobPostingService>();
 builder.Services.AddSingleton<ICandidateService, InMemoryCandidateService>();
 builder.Services.AddSingleton<IScreeningService, InMemoryScreeningService>();

@@ -99,6 +99,17 @@ function App() {
   const [lastBatch, setLastBatch] = useState(null)
   const [rankingReport, setRankingReport] = useState(null)
   const [candidateDisplayCount, setCandidateDisplayCount] = useState(6)
+  const [showSignUpModal, setShowSignUpModal] = useState(false)
+  const [signUpForm, setSignUpForm] = useState({
+    fullName: '',
+    companyName: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  })
+  const [signUpMessage, setSignUpMessage] = useState('')
+  const [signUpError, setSignUpError] = useState('')
+  const [isSigningUp, setIsSigningUp] = useState(false)
 
   const selectedJobPosting = useMemo(
     () => jobPostings.find((jobPosting) => jobPosting.id === selectedJobPostingId) ?? null,
@@ -456,6 +467,83 @@ function App() {
     setUploadMessage('Select a job posting, attach the role description, and upload candidate CVs to generate a ranking report.')
   }
 
+  function handleOpenSignUpModal() {
+    setSignUpError('')
+    setSignUpMessage('')
+    setShowSignUpModal(true)
+  }
+
+  function handleCloseSignUpModal() {
+    setShowSignUpModal(false)
+    setSignUpError('')
+    setSignUpMessage('')
+    setIsSigningUp(false)
+    setSignUpForm({
+      fullName: '',
+      companyName: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+    })
+  }
+
+  function handleLoginClick() {
+    setUploadMessage('Login is not implemented yet. Use Sign Up to create a recruiter account for this MVP.')
+  }
+
+  async function handleSignUpSubmit(event) {
+    event.preventDefault()
+    setSignUpError('')
+    setSignUpMessage('')
+
+    if (!signUpForm.fullName.trim() || !signUpForm.companyName.trim() || !signUpForm.email.trim() || !signUpForm.password) {
+      setSignUpError('Please fill in all sign up fields.')
+      return
+    }
+
+    if (signUpForm.password.length < 8) {
+      setSignUpError('Password must be at least 8 characters long.')
+      return
+    }
+
+    if (signUpForm.password !== signUpForm.confirmPassword) {
+      setSignUpError('Password confirmation does not match.')
+      return
+    }
+
+    setIsSigningUp(true)
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/signup`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          fullName: signUpForm.fullName.trim(),
+          companyName: signUpForm.companyName.trim(),
+          email: signUpForm.email.trim(),
+          password: signUpForm.password,
+        }),
+      })
+
+      const payload = await response.json()
+      if (!response.ok) {
+        throw new Error(payload?.message || 'Sign up could not be completed.')
+      }
+
+      setSignUpMessage(payload.message || 'Account created successfully.')
+      setUploadMessage(`Welcome, ${payload.fullName}. Your recruiter account has been created.`)
+      setTimeout(() => {
+        handleCloseSignUpModal()
+      }, 1200)
+    } catch (error) {
+      setSignUpError(error.message)
+    } finally {
+      setIsSigningUp(false)
+    }
+  }
+
   return (
     <AppLayout
       brand="CV Match Platform"
@@ -463,6 +551,8 @@ function App() {
       subheading="A simple recruiter workflow for uploading job requirements, screening multiple CVs, and reviewing ranked candidates with clear explanations."
       navigationItems={navigationItems}
       stats={quickStats}
+      onLoginClick={handleLoginClick}
+      onSignUpClick={handleOpenSignUpModal}
     >
       <section className="hero-panel">
         <div className="hero-copy">
@@ -951,6 +1041,79 @@ function App() {
           </div>
         </div>
       </footer>
+
+      {showSignUpModal ? (
+        <div className="auth-modal-backdrop" role="presentation" onClick={handleCloseSignUpModal}>
+          <section
+            className="auth-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="signup-title"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="auth-modal__header">
+              <div>
+                <p className="card-kicker">Recruiter Access</p>
+                <h3 id="signup-title">Create Your Recruiter Account</h3>
+              </div>
+              <button type="button" className="auth-modal__close" onClick={handleCloseSignUpModal}>
+                Close
+              </button>
+            </div>
+            <form className="auth-form" onSubmit={handleSignUpSubmit}>
+              <label className="field-label" htmlFor="signup-full-name">Full Name</label>
+              <input
+                id="signup-full-name"
+                className="form-input"
+                value={signUpForm.fullName}
+                onChange={(event) => setSignUpForm((current) => ({ ...current, fullName: event.target.value }))}
+              />
+
+              <label className="field-label" htmlFor="signup-company">Company</label>
+              <input
+                id="signup-company"
+                className="form-input"
+                value={signUpForm.companyName}
+                onChange={(event) => setSignUpForm((current) => ({ ...current, companyName: event.target.value }))}
+              />
+
+              <label className="field-label" htmlFor="signup-email">Email</label>
+              <input
+                id="signup-email"
+                className="form-input"
+                type="email"
+                value={signUpForm.email}
+                onChange={(event) => setSignUpForm((current) => ({ ...current, email: event.target.value }))}
+              />
+
+              <label className="field-label" htmlFor="signup-password">Password</label>
+              <input
+                id="signup-password"
+                className="form-input"
+                type="password"
+                value={signUpForm.password}
+                onChange={(event) => setSignUpForm((current) => ({ ...current, password: event.target.value }))}
+              />
+
+              <label className="field-label" htmlFor="signup-confirm-password">Confirm Password</label>
+              <input
+                id="signup-confirm-password"
+                className="form-input"
+                type="password"
+                value={signUpForm.confirmPassword}
+                onChange={(event) => setSignUpForm((current) => ({ ...current, confirmPassword: event.target.value }))}
+              />
+
+              {signUpMessage ? <p className="auth-form__success">{signUpMessage}</p> : null}
+              {signUpError ? <p className="auth-form__error">{signUpError}</p> : null}
+
+              <button className="submit-button" type="submit" disabled={isSigningUp}>
+                {isSigningUp ? 'Creating Account...' : 'Create Recruiter Account'}
+              </button>
+            </form>
+          </section>
+        </div>
+      ) : null}
     </AppLayout>
   )
 }

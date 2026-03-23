@@ -723,6 +723,62 @@
   text-decoration: underline;
 }
 
+.auth-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(15, 23, 34, 0.48);
+}
+
+.auth-modal {
+  width: min(100%, 480px);
+  border-radius: 24px;
+  border: 1px solid rgba(39, 95, 134, 0.16);
+  background: rgba(255, 252, 245, 0.98);
+  box-shadow: 0 24px 60px rgba(12, 23, 36, 0.24);
+  padding: 1.4rem;
+}
+
+.auth-modal__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: start;
+}
+
+.auth-modal__header h3 {
+  margin: 0.4rem 0 0;
+}
+
+.auth-modal__close {
+  border: 1px solid rgba(39, 95, 134, 0.16);
+  background: rgba(244, 249, 251, 0.92);
+  color: #17324a;
+  border-radius: 999px;
+  padding: 0.48rem 0.88rem;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.auth-form {
+  margin-top: 1rem;
+}
+
+.auth-form__success {
+  margin: 0.9rem 0 0;
+  color: #0f766e;
+  font-weight: 600;
+}
+
+.auth-form__error {
+  margin: 0.9rem 0 0;
+  color: #b42318;
+  font-weight: 600;
+}
+
 @media (max-width: 1120px) {
   .hero-panel {
     grid-template-columns: 1fr;
