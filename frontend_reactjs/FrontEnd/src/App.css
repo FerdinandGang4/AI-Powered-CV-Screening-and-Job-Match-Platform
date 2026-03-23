@@ -126,6 +126,12 @@
   gap: 1rem;
 }
 
+.simple-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
 .workspace-card {
   padding: 1.4rem;
 }
@@ -140,13 +146,114 @@
   line-height: 1.6;
 }
 
+.mock-dropzone {
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px dashed rgba(39, 95, 134, 0.32);
+  border-radius: 18px;
+  background: rgba(244, 248, 245, 0.8);
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.process-list {
+  margin: 1rem 0 0;
+  padding-left: 1.1rem;
+  color: var(--muted);
+}
+
+.process-list li + li {
+  margin-top: 0.45rem;
+}
+
+.results-section {
+  margin-top: 1.2rem;
+  padding: 1.4rem;
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  background: rgba(255, 252, 245, 0.92);
+  box-shadow: 0 20px 50px rgba(26, 41, 35, 0.08);
+}
+
+.results-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: end;
+  margin-bottom: 1rem;
+}
+
+.results-header h3,
+.insight-card h3 {
+  margin: 0.35rem 0 0;
+  font-size: 1.25rem;
+}
+
+.results-copy {
+  max-width: 42ch;
+  color: var(--muted);
+}
+
+.candidate-results {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.candidate-card,
+.insight-card {
+  padding: 1.2rem;
+  border-radius: 20px;
+  border: 1px solid rgba(39, 95, 134, 0.12);
+  background: rgba(255, 255, 255, 0.86);
+}
+
+.candidate-card__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.candidate-rank,
+.candidate-score {
+  font-weight: 800;
+  color: var(--accent-strong);
+}
+
+.candidate-card h4 {
+  margin: 0.85rem 0 0.55rem;
+  font-size: 1.1rem;
+}
+
+.candidate-summary,
+.candidate-gap,
+.insight-card p:last-child {
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.insight-strip {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
 @media (max-width: 1120px) {
   .hero-panel {
     grid-template-columns: 1fr;
   }
 
-  .workspace-grid {
+  .workspace-grid,
+  .simple-grid,
+  .candidate-results,
+  .insight-strip {
     grid-template-columns: 1fr;
+  }
+
+  .results-header {
+    flex-direction: column;
+    align-items: start;
   }
 }
 
