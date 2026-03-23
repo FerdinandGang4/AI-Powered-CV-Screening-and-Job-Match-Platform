@@ -19,4 +19,18 @@ public sealed class AuthController(IAuthService authService) : BaseApiController
             return BadRequest(new { message = exception.Message });
         }
     }
+
+    [HttpPost("login")]
+    public ActionResult<AuthResponseDto> Login([FromBody] LoginRequest request)
+    {
+        try
+        {
+            var response = authService.Login(request);
+            return Ok(response);
+        }
+        catch (InvalidOperationException exception)
+        {
+            return BadRequest(new { message = exception.Message });
+        }
+    }
 }

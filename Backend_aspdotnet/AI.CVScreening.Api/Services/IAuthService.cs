@@ -5,4 +5,5 @@ namespace AI.CVScreening.Api.Services;
 public interface IAuthService
 {
     AuthResponseDto SignUp(SignUpRequest request);
+    AuthResponseDto Login(LoginRequest request);
 }

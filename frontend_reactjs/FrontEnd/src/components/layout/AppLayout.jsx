@@ -9,6 +9,7 @@ function AppLayout({
   stats,
   onLoginClick,
   onSignUpClick,
+  currentUser,
   children,
 }) {
   return (
@@ -21,6 +22,7 @@ function AppLayout({
         stats={stats}
         onLoginClick={onLoginClick}
         onSignUpClick={onSignUpClick}
+        currentUser={currentUser}
       />
       <main className="app-content">{children}</main>
     </div>

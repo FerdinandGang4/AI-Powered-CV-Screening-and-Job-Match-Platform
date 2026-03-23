@@ -99,6 +99,15 @@ function App() {
   const [lastBatch, setLastBatch] = useState(null)
   const [rankingReport, setRankingReport] = useState(null)
   const [candidateDisplayCount, setCandidateDisplayCount] = useState(6)
+  const [currentUser, setCurrentUser] = useState(null)
+  const [showLoginModal, setShowLoginModal] = useState(false)
+  const [loginForm, setLoginForm] = useState({
+    email: '',
+    password: '',
+  })
+  const [loginMessage, setLoginMessage] = useState('')
+  const [loginError, setLoginError] = useState('')
+  const [isLoggingIn, setIsLoggingIn] = useState(false)
   const [showSignUpModal, setShowSignUpModal] = useState(false)
   const [signUpForm, setSignUpForm] = useState({
     fullName: '',
@@ -468,9 +477,28 @@ function App() {
   }
 
   function handleOpenSignUpModal() {
+    setShowLoginModal(false)
     setSignUpError('')
     setSignUpMessage('')
     setShowSignUpModal(true)
+  }
+
+  function handleOpenLoginModal() {
+    setShowSignUpModal(false)
+    setLoginError('')
+    setLoginMessage('')
+    setShowLoginModal(true)
+  }
+
+  function handleCloseLoginModal() {
+    setShowLoginModal(false)
+    setLoginError('')
+    setLoginMessage('')
+    setIsLoggingIn(false)
+    setLoginForm({
+      email: '',
+      password: '',
+    })
   }
 
   function handleCloseSignUpModal() {
@@ -488,7 +516,7 @@ function App() {
   }
 
   function handleLoginClick() {
-    setUploadMessage('Login is not implemented yet. Use Sign Up to create a recruiter account for this MVP.')
+    handleOpenLoginModal()
   }
 
   async function handleSignUpSubmit(event) {
@@ -533,6 +561,11 @@ function App() {
       }
 
       setSignUpMessage(payload.message || 'Account created successfully.')
+      setCurrentUser({
+        fullName: payload.fullName,
+        companyName: payload.companyName,
+        email: payload.email,
+      })
       setUploadMessage(`Welcome, ${payload.fullName}. Your recruiter account has been created.`)
       setTimeout(() => {
         handleCloseSignUpModal()
@@ -541,6 +574,52 @@ function App() {
       setSignUpError(error.message)
     } finally {
       setIsSigningUp(false)
+    }
+  }
+
+  async function handleLoginSubmit(event) {
+    event.preventDefault()
+    setLoginError('')
+    setLoginMessage('')
+
+    if (!loginForm.email.trim() || !loginForm.password) {
+      setLoginError('Please enter your email and password.')
+      return
+    }
+
+    setIsLoggingIn(true)
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: loginForm.email.trim(),
+          password: loginForm.password,
+        }),
+      })
+
+      const payload = await response.json()
+      if (!response.ok) {
+        throw new Error(payload?.message || 'Login could not be completed.')
+      }
+
+      setCurrentUser({
+        fullName: payload.fullName,
+        companyName: payload.companyName,
+        email: payload.email,
+      })
+      setLoginMessage(payload.message || 'Login successful.')
+      setUploadMessage(`Welcome back, ${payload.fullName}. You are now logged in.`)
+      setTimeout(() => {
+        handleCloseLoginModal()
+      }, 1200)
+    } catch (error) {
+      setLoginError(error.message)
+    } finally {
+      setIsLoggingIn(false)
     }
   }
 
@@ -553,6 +632,7 @@ function App() {
       stats={quickStats}
       onLoginClick={handleLoginClick}
       onSignUpClick={handleOpenSignUpModal}
+      currentUser={currentUser}
     >
       <section className="hero-panel">
         <div className="hero-copy">
@@ -1109,6 +1189,54 @@ function App() {
 
               <button className="submit-button" type="submit" disabled={isSigningUp}>
                 {isSigningUp ? 'Creating Account...' : 'Create Recruiter Account'}
+              </button>
+            </form>
+          </section>
+        </div>
+      ) : null}
+
+      {showLoginModal ? (
+        <div className="auth-modal-backdrop" role="presentation" onClick={handleCloseLoginModal}>
+          <section
+            className="auth-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="login-title"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="auth-modal__header">
+              <div>
+                <p className="card-kicker">Recruiter Access</p>
+                <h3 id="login-title">Log In To Your Recruiter Account</h3>
+              </div>
+              <button type="button" className="auth-modal__close" onClick={handleCloseLoginModal}>
+                Close
+              </button>
+            </div>
+            <form className="auth-form" onSubmit={handleLoginSubmit}>
+              <label className="field-label" htmlFor="login-email">Email</label>
+              <input
+                id="login-email"
+                className="form-input"
+                type="email"
+                value={loginForm.email}
+                onChange={(event) => setLoginForm((current) => ({ ...current, email: event.target.value }))}
+              />
+
+              <label className="field-label" htmlFor="login-password">Password</label>
+              <input
+                id="login-password"
+                className="form-input"
+                type="password"
+                value={loginForm.password}
+                onChange={(event) => setLoginForm((current) => ({ ...current, password: event.target.value }))}
+              />
+
+              {loginMessage ? <p className="auth-form__success">{loginMessage}</p> : null}
+              {loginError ? <p className="auth-form__error">{loginError}</p> : null}
+
+              <button className="submit-button" type="submit" disabled={isLoggingIn}>
+                {isLoggingIn ? 'Logging In...' : 'Log In'}
               </button>
             </form>
           </section>

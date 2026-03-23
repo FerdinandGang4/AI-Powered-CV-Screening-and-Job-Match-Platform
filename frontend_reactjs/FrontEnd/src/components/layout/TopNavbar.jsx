@@ -1,4 +1,13 @@
-function TopNavbar({ brand, heading, subheading, navigationItems, stats, onLoginClick, onSignUpClick }) {
+function TopNavbar({
+  brand,
+  heading,
+  subheading,
+  navigationItems,
+  stats,
+  onLoginClick,
+  onSignUpClick,
+  currentUser,
+}) {
   return (
     <header className="top-navbar">
       <div className="top-navbar__main">
@@ -42,12 +51,21 @@ function TopNavbar({ brand, heading, subheading, navigationItems, stats, onLogin
           <a href="https://github.com/FerdinandGang4/" target="_blank" rel="noreferrer">GitHub</a>
         </div>
         <div className="top-navbar__auth">
-          <button type="button" className="top-navbar__auth-button top-navbar__auth-button--ghost" onClick={onLoginClick}>
-            Login
-          </button>
-          <button type="button" className="top-navbar__auth-button top-navbar__auth-button--solid" onClick={onSignUpClick}>
-            Sign Up
-          </button>
+          {currentUser ? (
+            <div className="top-navbar__user-chip">
+              <strong>{currentUser.fullName}</strong>
+              <span>{currentUser.companyName}</span>
+            </div>
+          ) : (
+            <>
+              <button type="button" className="top-navbar__auth-button top-navbar__auth-button--ghost" onClick={onLoginClick}>
+                Login
+              </button>
+              <button type="button" className="top-navbar__auth-button top-navbar__auth-button--solid" onClick={onSignUpClick}>
+                Sign Up
+              </button>
+            </>
+          )}
         </div>
       </nav>
     </header>
