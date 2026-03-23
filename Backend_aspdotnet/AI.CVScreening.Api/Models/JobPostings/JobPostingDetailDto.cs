@@ -1,24 +1,13 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace AI.CVScreening.Api.Models.JobPostings;
 
-public sealed class CreateJobPostingRequest
+public sealed class JobPostingDetailDto
 {
-    [Required]
-    [MaxLength(200)]
+    public Guid Id { get; set; }
     public string Title { get; set; } = string.Empty;
-
-    [MaxLength(150)]
     public string Department { get; set; } = string.Empty;
-
-    [Required]
     public string DescriptionText { get; set; } = string.Empty;
-
-    [Range(0, 50)]
     public int MinimumYearsExperience { get; set; }
-
-    [MaxLength(150)]
     public string Location { get; set; } = string.Empty;
-
-    public IReadOnlyCollection<CreateJobRequirementRequest> Requirements { get; set; } = Array.Empty<CreateJobRequirementRequest>();
+    public DateTime CreatedAtUtc { get; set; }
+    public IReadOnlyCollection<JobRequirementDto> Requirements { get; set; } = Array.Empty<JobRequirementDto>();
 }
