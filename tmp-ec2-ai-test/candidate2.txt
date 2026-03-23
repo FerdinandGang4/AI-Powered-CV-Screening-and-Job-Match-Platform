@@ -1,0 +1,4 @@
+Brian Cole
+Frontend Developer
+2 years experience with HTML, CSS, JavaScript, React, and UI testing.
+Worked on dashboards and design systems.

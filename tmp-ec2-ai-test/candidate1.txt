@@ -1,0 +1,4 @@
+Amina Hassan
+Senior Software Engineer
+5 years experience building backend systems with C#, .NET Core, ASP.NET, SQL Server, Azure, CI/CD, REST APIs, and microservices.
+Built scalable APIs and modernized enterprise applications.

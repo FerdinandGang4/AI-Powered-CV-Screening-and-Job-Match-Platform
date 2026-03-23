@@ -166,6 +166,20 @@
   border-color: rgba(214, 226, 235, 0.24);
 }
 
+.top-navbar__nav-item:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  background: transparent;
+  border-color: rgba(214, 226, 235, 0.1);
+}
+
+.top-navbar__nav-item:disabled:hover {
+  transform: none;
+  background: transparent;
+  border-color: rgba(214, 226, 235, 0.1);
+}
+
 .top-navbar__nav-item.is-active {
   background: rgba(117, 170, 196, 0.2);
   border-color: rgba(117, 170, 196, 0.36);

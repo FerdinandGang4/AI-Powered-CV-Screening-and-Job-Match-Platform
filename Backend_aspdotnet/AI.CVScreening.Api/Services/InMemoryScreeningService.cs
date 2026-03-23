@@ -2,10 +2,12 @@ using AI.CVScreening.Api.Models.Candidates;
 using AI.CVScreening.Api.Models.Documents;
 using AI.CVScreening.Api.Models.Evaluations;
 using AI.CVScreening.Api.Models.JobPostings;
+using AI.CVScreening.Api.Models.Persistence;
 using AI.CVScreening.Api.Models.Shared;
 using AI.CVScreening.Api.Models.Uploads;
 using System.IO.Compression;
 using System.Net;
+using System.Text.Json;
 using System.Text;
 using System.Text.RegularExpressions;
 using UglyToad.PdfPig;
@@ -16,6 +18,7 @@ public sealed class InMemoryScreeningService(
     IJobPostingService jobPostingService,
     ICandidateService candidateService,
     IOpenAiRankingService openAiRankingService,
+    IScreeningDocumentStore screeningDocumentStore,
     ILogger<InMemoryScreeningService> logger,
     AppMemoryStore store) : IScreeningService
 {
@@ -41,6 +44,10 @@ public sealed class InMemoryScreeningService(
         store.BatchToJobPostingMap[batchId] = jobPosting.Id;
         store.LatestReportsByJobPostingId[jobPosting.Id] = rankingReport;
 
+        await screeningDocumentStore.SaveSubmissionAsync(
+            BuildSubmissionDocument(batchId, request, jobPosting, jobDescriptionText, rankingReport),
+            cancellationToken);
+
         return new ScreeningBatchUploadResponse
         {
             BatchId = batchId,
@@ -62,6 +69,33 @@ public sealed class InMemoryScreeningService(
                 })
                 .ToArray(),
             Message = "Documents uploaded successfully. A ranking report has been generated for the selected job posting."
+        };
+    }
+
+    private static ScreeningSubmissionDocument BuildSubmissionDocument(
+        Guid batchId,
+        ScreeningBatchUploadRequest request,
+        JobPostingDetailDto jobPosting,
+        string jobDescriptionText,
+        RankingReportDto rankingReport)
+    {
+        return new ScreeningSubmissionDocument
+        {
+            Id = Guid.NewGuid(),
+            BatchId = batchId,
+            JobPostingId = jobPosting.Id,
+            JobTitle = jobPosting.Title,
+            JobDescriptionText = jobDescriptionText,
+            JobDescriptionSource = request.JobDescriptionFile is not null ? "file" : "pasted-text",
+            CreatedAtUtc = DateTime.UtcNow,
+            Candidates = request.CandidateCvs.Select(candidate => new ScreeningSubmissionCandidateDocument
+            {
+                FullName = candidate.CandidateName,
+                Email = candidate.CandidateEmail,
+                FileName = candidate.CvFile?.FileName ?? string.Empty,
+                ContentType = candidate.CvFile?.ContentType ?? string.Empty
+            }).ToArray(),
+            RankingReportJson = JsonSerializer.Serialize(rankingReport)
         };
     }
 

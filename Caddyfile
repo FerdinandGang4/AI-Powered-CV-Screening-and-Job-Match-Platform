@@ -1,0 +1,4 @@
+18-188-146-156.sslip.io {
+    reverse_proxy /api/* backend:8080
+    reverse_proxy frontend:5173
+}

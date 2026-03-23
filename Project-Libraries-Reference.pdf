@@ -1,0 +1,268 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [ 3 0 R 5 0 R 7 0 R ] /Count 3 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 9 0 R >> >> /Contents 4 0 R >>
+endobj
+4 0 obj
+<< /Length 1697 >>
+stream
+BT
+/F1 12 Tf
+72 740 Td
+16 TL
+(Project Libraries Reference) Tj
+T*
+() Tj
+T*
+(Overview) Tj
+T*
+() Tj
+T*
+(This document lists the main libraries and packages used in the AI-Powered CV Screening and) Tj
+T*
+(Job Match Platform and explains the role of each one in the project.) Tj
+T*
+() Tj
+T*
+(Backend Libraries) Tj
+T*
+() Tj
+T*
+(1. ASP.NET Core Web SDK) Tj
+T*
+(Source: Microsoft.NET.Sdk.Web) Tj
+T*
+(Role: Provides the core ASP.NET backend framework for building the API, handling routing,) Tj
+T*
+(controllers, dependency injection, configuration, and HTTP request processing.) Tj
+T*
+() Tj
+T*
+(2. UglyToad.PdfPig) Tj
+T*
+(Version: 1.7.0-custom-5) Tj
+T*
+(Role: Used in the backend to extract readable text from uploaded PDF files, especially) Tj
+T*
+(candidate CV documents. This text is then used for parsing, skill extraction, matching, and) Tj
+T*
+(ranking.) Tj
+T*
+() Tj
+T*
+(Frontend Runtime Libraries) Tj
+T*
+() Tj
+T*
+(3. React) Tj
+T*
+(Version: 19.2.4) Tj
+T*
+(Role: Main frontend UI library used to build reusable components, manage application state,) Tj
+T*
+(and render the recruiter workflow.) Tj
+T*
+() Tj
+T*
+(4. React DOM) Tj
+T*
+(Version: 19.2.4) Tj
+T*
+(Role: Connects React components to the browser DOM and enables the frontend application to) Tj
+T*
+(render in the browser.) Tj
+T*
+() Tj
+T*
+(Frontend Build And Development Libraries) Tj
+T*
+() Tj
+T*
+(5. Vite) Tj
+T*
+(Version: 8.0.1) Tj
+T*
+(Role: Frontend build tool and development server. It provides fast local development, module) Tj
+T*
+(bundling, and production builds for the React app.) Tj
+T*
+() Tj
+T*
+(6. @vitejs/plugin-react) Tj
+T*
+(Version: 6.0.1) Tj
+T*
+(Role: Vite plugin that enables React support, including JSX transformation and) Tj
+T*
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 9 0 R >> >> /Contents 6 0 R >>
+endobj
+6 0 obj
+<< /Length 1571 >>
+stream
+BT
+/F1 12 Tf
+72 740 Td
+16 TL
+(React-specific development behavior.) Tj
+T*
+() Tj
+T*
+(Code Quality And Linting Libraries) Tj
+T*
+() Tj
+T*
+(7. ESLint) Tj
+T*
+(Version: 9.39.4) Tj
+T*
+(Role: Static analysis tool used to detect code issues, maintain code quality, and promote) Tj
+T*
+(consistent coding practices in the frontend.) Tj
+T*
+() Tj
+T*
+(8. @eslint/js) Tj
+T*
+(Version: 9.39.4) Tj
+T*
+(Role: Provides core JavaScript linting rules used by ESLint.) Tj
+T*
+() Tj
+T*
+(9. eslint-plugin-react-hooks) Tj
+T*
+(Version: 7.0.1) Tj
+T*
+(Role: Ensures correct usage of React Hooks and helps prevent common Hook-related bugs.) Tj
+T*
+() Tj
+T*
+(10. eslint-plugin-react-refresh) Tj
+T*
+(Version: 0.5.2) Tj
+T*
+(Role: Supports linting rules that work well with React Fast Refresh during development.) Tj
+T*
+() Tj
+T*
+(11. globals) Tj
+T*
+(Version: 17.4.0) Tj
+T*
+(Role: Provides predefined global variables for linting environments so frontend code can be) Tj
+T*
+(validated correctly.) Tj
+T*
+() Tj
+T*
+(Type Support Libraries) Tj
+T*
+() Tj
+T*
+(12. @types/react) Tj
+T*
+(Version: 19.2.14) Tj
+T*
+(Role: Provides TypeScript type definitions for React. Even though the current frontend uses) Tj
+T*
+(JavaScript, this package supports tooling compatibility and future migration.) Tj
+T*
+() Tj
+T*
+(13. @types/react-dom) Tj
+T*
+(Version: 19.2.3) Tj
+T*
+(Role: Provides TypeScript type definitions for React DOM and supports frontend tooling) Tj
+T*
+(compatibility.) Tj
+T*
+() Tj
+T*
+(Supporting Platform Technologies) Tj
+T*
+() Tj
+T*
+(14. .NET 10) Tj
+T*
+(Role: Target runtime for the backend API project.) Tj
+T*
+ET
+endstream
+endobj
+7 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 9 0 R >> >> /Contents 8 0 R >>
+endobj
+8 0 obj
+<< /Length 866 >>
+stream
+BT
+/F1 12 Tf
+72 740 Td
+16 TL
+() Tj
+T*
+(15. OpenAI API) Tj
+T*
+(Role: Used for AI-assisted candidate ranking and explanation generation when the backend is) Tj
+T*
+(configured with a valid API key.) Tj
+T*
+() Tj
+T*
+(16. PowerShell) Tj
+T*
+(Role: Used in the project for utility scripts such as generating PDF documentation files.) Tj
+T*
+() Tj
+T*
+(Summary) Tj
+T*
+() Tj
+T*
+(The project uses a focused and relatively lightweight technology stack: ASP.NET Core for) Tj
+T*
+(backend API services, PdfPig for PDF CV text extraction, React for the frontend interface,) Tj
+T*
+(Vite for frontend build tooling, ESLint and related plugins for code quality, and OpenAI API) Tj
+T*
+(for AI-assisted ranking functionality.) Tj
+T*
+() Tj
+T*
+(This combination keeps the system modular, understandable, and suitable for an academic,) Tj
+T*
+(portfolio, or early product prototype.) Tj
+T*
+ET
+endstream
+endobj
+9 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 10
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000129 00000 n 
+0000000255 00000 n 
+0000002003 00000 n 
+0000002129 00000 n 
+0000003751 00000 n 
+0000003877 00000 n 
+0000004793 00000 n 
+trailer
+<< /Size 10 /Root 1 0 R >>
+startxref
+4863
+%%EOF

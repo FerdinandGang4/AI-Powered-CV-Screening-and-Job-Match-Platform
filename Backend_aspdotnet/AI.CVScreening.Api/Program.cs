@@ -35,9 +35,19 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddSingleton<AppMemoryStore>();
 builder.Services.Configure<OpenAiOptions>(builder.Configuration.GetSection("OpenAI"));
+builder.Services.Configure<MongoDbOptions>(builder.Configuration.GetSection("MongoDb"));
 builder.Services.AddSingleton<IAuthService, InMemoryAuthService>();
 builder.Services.AddSingleton<IJobPostingService, InMemoryJobPostingService>();
 builder.Services.AddSingleton<ICandidateService, InMemoryCandidateService>();
+var mongoOptions = builder.Configuration.GetSection("MongoDb").Get<MongoDbOptions>() ?? new MongoDbOptions();
+if (mongoOptions.UseMongoDocumentStore)
+{
+    builder.Services.AddSingleton<IScreeningDocumentStore, MongoScreeningDocumentStore>();
+}
+else
+{
+    builder.Services.AddSingleton<IScreeningDocumentStore, NoOpScreeningDocumentStore>();
+}
 builder.Services.AddSingleton<IScreeningService, InMemoryScreeningService>();
 builder.Services.AddHttpClient<IOpenAiRankingService, OpenAiRankingService>();
 

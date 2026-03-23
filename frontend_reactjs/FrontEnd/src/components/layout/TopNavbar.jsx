@@ -10,6 +10,11 @@ function TopNavbar({
   currentUser,
 }) {
   function scrollToSection(targetId) {
+    if (!currentUser) {
+      onLoginClick?.()
+      return
+    }
+
     if (!targetId) {
       return
     }
@@ -58,6 +63,8 @@ function TopNavbar({
             key={item.label}
             type="button"
             className={`top-navbar__nav-item${item.isActive ? ' is-active' : ''}`}
+            disabled={!currentUser}
+            aria-disabled={!currentUser}
             onClick={() => scrollToSection(item.targetId)}
           >
             {item.label}

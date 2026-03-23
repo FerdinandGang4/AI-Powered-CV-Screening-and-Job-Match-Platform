@@ -1,0 +1,197 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [ 3 0 R 5 0 R ] /Count 2 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 7 0 R >> >> /Contents 4 0 R >>
+endobj
+4 0 obj
+<< /Length 2935 >>
+stream
+BT
+/F1 12 Tf
+72 740 Td
+16 TL
+(EB-2 NIW Project Summary) Tj
+T*
+() Tj
+T*
+(Proposed Endeavor Statement) Tj
+T*
+() Tj
+T*
+(My proposed endeavor is to design, develop, and advance AI-assisted software systems that) Tj
+T*
+(improve workforce screening, candidate-job matching, and hiring efficiency in the United) Tj
+T*
+(States. My work focuses on practical web-based tools that help recruiters and employers) Tj
+T*
+(process job descriptions and resumes more efficiently, extract relevant qualifications, rank) Tj
+T*
+(candidates against role requirements, and generate clear explanations of strengths and gaps.) Tj
+T*
+(Through this endeavor, I seek to apply software engineering, AI-enabled document analysis,) Tj
+T*
+(and scalable application architecture to reduce manual recruiting burdens, improve) Tj
+T*
+(consistency in candidate evaluation, and support more effective talent selection across U.S.) Tj
+T*
+(organizations.) Tj
+T*
+() Tj
+T*
+(This endeavor has substantial merit because it addresses operational inefficiencies in) Tj
+T*
+(recruitment and hiring, which affect productivity, workforce placement, and business) Tj
+T*
+(performance. It has national importance because scalable improvements in hiring workflows) Tj
+T*
+(can benefit employers across industries, support labor-market efficiency, and strengthen the) Tj
+T*
+(ability of U.S. organizations to identify qualified talent more effectively.) Tj
+T*
+() Tj
+T*
+(Project Evidence Section) Tj
+T*
+() Tj
+T*
+(As evidence of concrete progress toward my proposed endeavor, I developed an AI-powered CV) Tj
+T*
+(screening and job matching platform using ASP.NET for backend services and React for the) Tj
+T*
+(frontend interface. The system enables recruiters to provide a job description, upload) Tj
+T*
+(multiple CVs, parse candidate information, extract skills and experience, evaluate) Tj
+T*
+(applicants against role requirements, rank candidates, and generate recruiter-friendly) Tj
+T*
+(explanations of candidate strengths and gaps.) Tj
+T*
+() Tj
+T*
+(The project includes a structured backend architecture, authentication workflow, file upload) Tj
+T*
+(pipeline, PDF resume handling, ranking logic, OpenAI-assisted evaluation support, and a) Tj
+T*
+(recruiter-facing interface for screening and reviewing candidates. I also produced) Tj
+T*
+(supporting technical documentation, including architecture diagrams, class diagrams, and) Tj
+T*
+(workflow diagrams, demonstrating organized system design and implementation maturity.) Tj
+T*
+() Tj
+T*
+(This project shows that I have already moved beyond a conceptual idea and have taken) Tj
+T*
+(meaningful steps to implement a practical solution aligned with my proposed endeavor. It) Tj
+T*
+(demonstrates technical capability, applied software engineering skill, and the ability to) Tj
+T*
+(translate an important workforce-related problem into a functioning technology platform.) Tj
+T*
+() Tj
+T*
+(Personal Statement Linking Background) Tj
+T*
+() Tj
+T*
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 7 0 R >> >> /Contents 6 0 R >>
+endobj
+6 0 obj
+<< /Length 2036 >>
+stream
+BT
+/F1 12 Tf
+72 740 Td
+16 TL
+(My academic and technical background has prepared me to advance this endeavor in a) Tj
+T*
+(meaningful and practical way. Through my training and software development experience, I) Tj
+T*
+(have built skills in backend engineering, frontend development, database-driven systems,) Tj
+T*
+(scalable application design, and applied AI integration. These skills directly support my) Tj
+T*
+(ability to create software tools that address real operational needs in hiring and workforce) Tj
+T*
+(systems.) Tj
+T*
+() Tj
+T*
+(The AI-powered CV screening and job matching platform reflects the intersection of my) Tj
+T*
+(technical background and my long-term professional goal: building practical, intelligent) Tj
+T*
+(systems that improve business processes and decision support. My work on this platform) Tj
+T*
+(demonstrates not only my software engineering capability, but also my readiness to continue) Tj
+T*
+(developing solutions with broader value to U.S. employers and institutions. Because I have) Tj
+T*
+(already designed and implemented a working version of this type of system, I am well) Tj
+T*
+(positioned to continue advancing this endeavor in the United States.) Tj
+T*
+() Tj
+T*
+(Suggested Supporting Evidence) Tj
+T*
+() Tj
+T*
+(1. GitHub repository link and commit history) Tj
+T*
+(2. Screenshots of the working system) Tj
+T*
+(3. Architecture, class, and sequence diagrams) Tj
+T*
+(4. Demo video or hosted demo if available) Tj
+T*
+(5. Testing results and sample ranking outputs) Tj
+T*
+(6. Letters from recruiters, professors, engineers, or employers) Tj
+T*
+(7. Roadmap showing future deployment and scale) Tj
+T*
+(8. Proof of user interest, pilot interest, or intended organizational use) Tj
+T*
+() Tj
+T*
+(USCIS Reference Points) Tj
+T*
+() Tj
+T*
+(USCIS evaluates NIW petitions under the Matter of Dhanasar framework. Helpful official) Tj
+T*
+(sources include the USCIS Policy Manual, Volume 6, Part F, Chapter 5, the USCIS EB-2 page,) Tj
+T*
+(and the USCIS update on EB-2 NIW petitions dated January 15, 2025.) Tj
+T*
+ET
+endstream
+endobj
+7 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000123 00000 n 
+0000000249 00000 n 
+0000003235 00000 n 
+0000003361 00000 n 
+0000005448 00000 n 
+trailer
+<< /Size 8 /Root 1 0 R >>
+startxref
+5518
+%%EOF

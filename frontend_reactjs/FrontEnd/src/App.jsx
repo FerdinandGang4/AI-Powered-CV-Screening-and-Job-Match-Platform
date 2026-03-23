@@ -8,7 +8,10 @@ const navigationItems = [
   { label: 'Ranking', description: 'Results and insights', targetId: 'ranking-results' },
 ]
 
-const API_BASE_URL = 'http://localhost:5282/api'
+const API_BASE_URL =
+  typeof window !== 'undefined' && window.location.hostname !== 'localhost'
+    ? `${window.location.origin}/api`
+    : 'http://localhost:5282/api'
 
 const AUTH_STORAGE_KEY = 'cvscreening_recruiter_auth'
 

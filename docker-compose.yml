@@ -1,0 +1,70 @@
+services:
+  caddy:
+    image: caddy:2
+    container_name: cvscreening-caddy
+    restart: unless-stopped
+    depends_on:
+      - frontend
+      - backend
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
+  mongo:
+    image: mongo:8
+    container_name: cvscreening-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  mongo-express:
+    image: mongo-express:1.0.2
+    container_name: cvscreening-mongo-express
+    restart: unless-stopped
+    depends_on:
+      - mongo
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongo
+      ME_CONFIG_BASICAUTH: "false"
+    ports:
+      - "8081:8081"
+
+  backend:
+    build:
+      context: ./Backend_aspdotnet/AI.CVScreening.Api
+    container_name: cvscreening-backend
+    restart: unless-stopped
+    depends_on:
+      - mongo
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      Cors__AllowedOrigins__0: http://localhost:5173
+      MongoDb__UseMongoDocumentStore: "true"
+      MongoDb__ConnectionString: mongodb://mongo:27017
+      MongoDb__DatabaseName: cvscreening
+      MongoDb__ScreeningSubmissionsCollection: screening_submissions
+      OpenAI__UseAiRanking: "true"
+      OpenAI__ApiKey: ${OPENAI_API_KEY:-}
+    ports:
+      - "5282:8080"
+
+  frontend:
+    build:
+      context: ./frontend_reactjs/FrontEnd
+    container_name: cvscreening-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "5173:5173"
+
+volumes:
+  mongo_data:
+  caddy_data:
+  caddy_config:
