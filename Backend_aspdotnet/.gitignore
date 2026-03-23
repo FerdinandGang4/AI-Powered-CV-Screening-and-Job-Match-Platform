@@ -39,3 +39,9 @@ Desktop.ini
 
 # Generated local tooling folders
 .dotnet/
+
+# Local smoke-test artifacts
+AI.CVScreening.Api/tmp-smoke/
+AI.CVScreening.Api/tmp-smoke-ai/
+AI.CVScreening.Api/tmp-smoke-ai-live/
+AI.CVScreening.Api/tmp-score-check/

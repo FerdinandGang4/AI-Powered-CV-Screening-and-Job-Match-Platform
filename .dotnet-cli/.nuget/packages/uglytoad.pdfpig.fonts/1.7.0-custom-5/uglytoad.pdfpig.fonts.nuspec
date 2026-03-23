@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>UglyToad.PdfPig.Fonts</id>
+    <version>1.7.0-custom-5</version>
+    <authors>UglyToad.PdfPig.Fonts</authors>
+    <description>Package Description</description>
+    <dependencies>
+      <group targetFramework=".NETFramework4.5.1">
+        <dependency id="UglyToad.PdfPig.Core" version="1.7.0-custom-5" exclude="Build,Analyzers" />
+        <dependency id="UglyToad.PdfPig.Tokenization" version="1.7.0-custom-5" exclude="Build,Analyzers" />
+        <dependency id="UglyToad.PdfPig.Tokens" version="1.7.0-custom-5" exclude="Build,Analyzers" />
+        <dependency id="System.ValueTuple" version="4.5.0" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework=".NETFramework4.5.2">
+        <dependency id="UglyToad.PdfPig.Core" version="1.7.0-custom-5" exclude="Build,Analyzers" />
+        <dependency id="UglyToad.PdfPig.Tokenization" version="1.7.0-custom-5" exclude="Build,Analyzers" />
+        <dependency id="UglyToad.PdfPig.Tokens" version="1.7.0-custom-5" exclude="Build,Analyzers" />
+        <dependency id="System.ValueTuple" version="4.5.0" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework=".NETFramework4.6">
+        <dependency id="UglyToad.PdfPig.Core" version="1.7.0-custom-5" exclude="Build,Analyzers" />
+        <dependency id="UglyToad.PdfPig.Tokenization" version="1.7.0-custom-5" exclude="Build,Analyzers" />
+        <dependency id="UglyToad.PdfPig.Tokens" version="1.7.0-custom-5" exclude="Build,Analyzers" />
+        <dependency id="System.ValueTuple" version="4.5.0" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework=".NETFramework4.6.1">
+        <dependency id="UglyToad.PdfPig.Core" version="1.7.0-custom-5" exclude="Build,Analyzers" />
+        <dependency id="UglyToad.PdfPig.Tokenization" version="1.7.0-custom-5" exclude="Build,Analyzers" />
+        <dependency id="UglyToad.PdfPig.Tokens" version="1.7.0-custom-5" exclude="Build,Analyzers" />
+        <dependency id="System.ValueTuple" version="4.5.0" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework=".NETFramework4.6.2">
+        <dependency id="UglyToad.PdfPig.Core" version="1.7.0-custom-5" exclude="Build,Analyzers" />
+        <dependency id="UglyToad.PdfPig.Tokenization" version="1.7.0-custom-5" exclude="Build,Analyzers" />
+        <dependency id="UglyToad.PdfPig.Tokens" version="1.7.0-custom-5" exclude="Build,Analyzers" />
+        <dependency id="System.ValueTuple" version="4.5.0" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework=".NETFramework4.7">
+        <dependency id="UglyToad.PdfPig.Core" version="1.7.0-custom-5" exclude="Build,Analyzers" />
+        <dependency id="UglyToad.PdfPig.Tokenization" version="1.7.0-custom-5" exclude="Build,Analyzers" />
+        <dependency id="UglyToad.PdfPig.Tokens" version="1.7.0-custom-5" exclude="Build,Analyzers" />
+        <dependency id="System.ValueTuple" version="4.5.0" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework="net6.0">
+        <dependency id="UglyToad.PdfPig.Core" version="1.7.0-custom-5" exclude="Build,Analyzers" />
+        <dependency id="UglyToad.PdfPig.Tokenization" version="1.7.0-custom-5" exclude="Build,Analyzers" />
+        <dependency id="UglyToad.PdfPig.Tokens" version="1.7.0-custom-5" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework=".NETStandard2.0">
+        <dependency id="UglyToad.PdfPig.Core" version="1.7.0-custom-5" exclude="Build,Analyzers" />
+        <dependency id="UglyToad.PdfPig.Tokenization" version="1.7.0-custom-5" exclude="Build,Analyzers" />
+        <dependency id="UglyToad.PdfPig.Tokens" version="1.7.0-custom-5" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+    <contentFiles>
+      <files include="any/net451/Resources/AdobeFontMetrics/MustRead.html" buildAction="Content" />
+      <files include="any/net452/Resources/AdobeFontMetrics/MustRead.html" buildAction="Content" />
+      <files include="any/net46/Resources/AdobeFontMetrics/MustRead.html" buildAction="Content" />
+      <files include="any/net461/Resources/AdobeFontMetrics/MustRead.html" buildAction="Content" />
+      <files include="any/net462/Resources/AdobeFontMetrics/MustRead.html" buildAction="Content" />
+      <files include="any/net47/Resources/AdobeFontMetrics/MustRead.html" buildAction="Content" />
+      <files include="any/net6.0/Resources/AdobeFontMetrics/MustRead.html" buildAction="Content" />
+      <files include="any/netstandard2.0/Resources/AdobeFontMetrics/MustRead.html" buildAction="Content" />
+    </contentFiles>
+  </metadata>
+</package>

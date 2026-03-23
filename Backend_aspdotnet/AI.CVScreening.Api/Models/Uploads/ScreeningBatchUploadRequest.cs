@@ -6,8 +6,9 @@ public sealed class ScreeningBatchUploadRequest
 {
     public Guid? JobPostingId { get; set; }
 
-    [Required]
     public IFormFile? JobDescriptionFile { get; set; }
+
+    public string? JobDescriptionText { get; set; }
 
     [Required]
     [MinLength(1)]

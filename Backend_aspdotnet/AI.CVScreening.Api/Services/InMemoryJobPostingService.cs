@@ -16,23 +16,19 @@ public sealed class InMemoryJobPostingService : IJobPostingService
             _store.JobPostings.Add(new JobPostingDetailDto
             {
                 Id = Guid.NewGuid(),
-                Title = "Senior ASP.NET Developer",
+                Title = "Software Engineer (.NET Core / SQL Server)",
                 Department = "Engineering",
-                DescriptionText = "Build scalable backend APIs for CV analysis and candidate ranking.",
-                MinimumYearsExperience = 4,
+                DescriptionText = """
+                    This role focuses on designing, building, and supporting modern, scalable software solutions using C#, .NET Core, and SQL Server. It includes contributing to new development efforts as well as enhancing and evolving existing systems, with an emphasis on performance, maintainability, and overall quality.
+                    The position contributes to Digitech's technology roadmap, supports modernization efforts, and helps improve operational efficiency and user experience.
+                    Key responsibilities include backend development with C# and .NET Core, SQL Server database development, API integration, Agile/Scrum participation, code reviews, troubleshooting production issues, collaboration with Product, QA, DevOps, and Architecture, technical documentation, and supporting CI/CD pipelines with version control and automated testing.
+                    Minimum qualifications include a Bachelor's degree in Computer Science or a related field, 3-5 years of professional software engineering experience, strong hands-on experience with C#, .NET Core, and SQL Server, solid knowledge of object-oriented programming, data structures, and design patterns, experience building or consuming APIs, familiarity with Agile methodologies, strong problem-solving ability, and the ability to work effectively in a remote environment.
+                    """,
+                MinimumYearsExperience = 3,
                 Location = "Remote",
                 CreatedAtUtc = DateTime.UtcNow,
                 Requirements =
                 [
-                    new()
-                    {
-                        Id = Guid.NewGuid(),
-                        RequirementType = RequirementType.Skill,
-                        Name = "ASP.NET Core",
-                        Priority = RequirementPriority.Critical,
-                        Weight = 35,
-                        IsMandatory = true
-                    },
                     new()
                     {
                         Id = Guid.NewGuid(),
@@ -45,10 +41,64 @@ public sealed class InMemoryJobPostingService : IJobPostingService
                     new()
                     {
                         Id = Guid.NewGuid(),
-                        RequirementType = RequirementType.Experience,
-                        Name = "Backend API Development",
+                        RequirementType = RequirementType.Skill,
+                        Name = ".NET Core",
+                        Priority = RequirementPriority.Critical,
+                        Weight = 28,
+                        IsMandatory = true
+                    },
+                    new()
+                    {
+                        Id = Guid.NewGuid(),
+                        RequirementType = RequirementType.Skill,
+                        Name = "SQL Server",
                         Priority = RequirementPriority.High,
-                        Weight = 20,
+                        Weight = 24,
+                        IsMandatory = true
+                    },
+                    new()
+                    {
+                        Id = Guid.NewGuid(),
+                        RequirementType = RequirementType.Skill,
+                        Name = "REST API",
+                        Priority = RequirementPriority.High,
+                        Weight = 16,
+                        IsMandatory = true
+                    },
+                    new()
+                    {
+                        Id = Guid.NewGuid(),
+                        RequirementType = RequirementType.Skill,
+                        Name = "Agile",
+                        Priority = RequirementPriority.Medium,
+                        Weight = 10,
+                        IsMandatory = false
+                    },
+                    new()
+                    {
+                        Id = Guid.NewGuid(),
+                        RequirementType = RequirementType.Project,
+                        Name = "CI/CD",
+                        Priority = RequirementPriority.Medium,
+                        Weight = 8,
+                        IsMandatory = false
+                    },
+                    new()
+                    {
+                        Id = Guid.NewGuid(),
+                        RequirementType = RequirementType.Project,
+                        Name = "Code Reviews",
+                        Priority = RequirementPriority.Medium,
+                        Weight = 6,
+                        IsMandatory = false
+                    },
+                    new()
+                    {
+                        Id = Guid.NewGuid(),
+                        RequirementType = RequirementType.Project,
+                        Name = "Troubleshooting",
+                        Priority = RequirementPriority.Medium,
+                        Weight = 6,
                         IsMandatory = true
                     }
                 ]

@@ -15,6 +15,7 @@ public sealed class CandidateEvaluationDto
     public decimal EducationScore { get; set; }
     public decimal SemanticScore { get; set; }
     public string Recommendation { get; set; } = string.Empty;
+    public string? ExtractionWarning { get; set; }
     public DateTime EvaluatedAtUtc { get; set; }
     public MatchExplanationDto? Explanation { get; set; }
     public IReadOnlyCollection<SkillGapDto> SkillGaps { get; set; } = Array.Empty<SkillGapDto>();

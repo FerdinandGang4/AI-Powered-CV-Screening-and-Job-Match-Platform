@@ -8,6 +8,8 @@ public sealed class RankingReportDto
     public JobPostingSummaryDto JobPosting { get; set; } = new();
     public DateTime GeneratedAtUtc { get; set; }
     public bool AiUsed { get; set; }
+    public string AiStatus { get; set; } = "fallback";
+    public string AiStatusMessage { get; set; } = string.Empty;
     public int TotalCandidates { get; set; }
     public Guid? TopCandidateId { get; set; }
     public IReadOnlyCollection<CandidateEvaluationDto> RankedCandidates { get; set; } = Array.Empty<CandidateEvaluationDto>();

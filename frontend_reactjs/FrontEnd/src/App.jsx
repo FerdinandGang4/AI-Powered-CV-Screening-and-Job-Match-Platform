@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import AppLayout from './components/layout/AppLayout'
 import './App.css'
 
@@ -77,8 +77,11 @@ const fallbackRankedCandidates = [
 ]
 
 function App() {
+  const jobDescriptionFileInputRef = useRef(null)
+  const candidateFilesInputRef = useRef(null)
   const [jobPostings, setJobPostings] = useState([])
   const [jobPostingMode, setJobPostingMode] = useState('existing')
+  const [jobDescriptionInputMode, setJobDescriptionInputMode] = useState('upload')
   const [selectedJobPostingId, setSelectedJobPostingId] = useState('')
   const [jobDescriptionFile, setJobDescriptionFile] = useState(null)
   const [jobDescriptionText, setJobDescriptionText] = useState('')
@@ -97,22 +100,19 @@ function App() {
   const [rankingReport, setRankingReport] = useState(null)
   const [candidateDisplayCount, setCandidateDisplayCount] = useState(6)
 
+  const selectedJobPosting = useMemo(
+    () => jobPostings.find((jobPosting) => jobPosting.id === selectedJobPostingId) ?? null,
+    [jobPostings, selectedJobPostingId],
+  )
+
   useEffect(() => {
     let ignore = false
 
     async function loadJobPostings() {
       try {
-        const response = await fetch(`${API_BASE_URL}/jobpostings`)
-        if (!response.ok) {
-          throw new Error('Unable to load job postings from the backend.')
-        }
-
-        const data = await response.json()
+        const data = await fetchJobPostings()
         if (!ignore) {
-          setJobPostings(data)
-          if (data.length > 0) {
-            setSelectedJobPostingId((current) => current || data[0].id)
-          }
+          syncJobPostings(data)
         }
       } catch (error) {
         if (!ignore) {
@@ -128,21 +128,53 @@ function App() {
     }
   }, [])
 
+  function syncJobPostings(data) {
+    setJobPostings(data)
+    setSelectedJobPostingId((current) => {
+      if (data.length === 0) {
+        return ''
+      }
+
+      if (!current) {
+        return ''
+      }
+
+      const stillExists = data.some((jobPosting) => jobPosting.id === current)
+      if (stillExists) {
+        return current
+      }
+
+      setJobPostingMessage('The previously selected job posting is no longer available. Leave the selector blank to use your uploaded or pasted job description, or choose another saved posting.')
+      return ''
+    })
+  }
+
+  async function fetchJobPostings() {
+    const response = await fetch(`${API_BASE_URL}/jobpostings`)
+    if (!response.ok) {
+      throw new Error('Unable to load job postings from the backend.')
+    }
+
+    return response.json()
+  }
+
   const quickStats = useMemo(() => [
-    { value: selectedJobPostingId || jobPostingMode === 'custom' ? '1' : '0', label: 'Job description' },
+    { value: selectedJobPostingId || jobDescriptionFile || jobDescriptionText.trim() ? '1' : '0', label: 'Job description' },
     { value: `${candidateFiles.length}`, label: 'CV files uploaded' },
     { value: `Top ${candidateDisplayCount}`, label: 'Shortlisted results' },
-  ], [candidateDisplayCount, candidateFiles.length, jobPostingMode, selectedJobPostingId])
+  ], [candidateDisplayCount, candidateFiles.length, jobDescriptionFile, jobDescriptionText, selectedJobPostingId])
 
   const rankedCandidates = useMemo(() => {
     if (!rankingReport?.rankedCandidates?.length) {
-      return fallbackRankedCandidates.slice(0, candidateDisplayCount)
+      return []
     }
 
     return rankingReport.rankedCandidates.slice(0, candidateDisplayCount).map((candidate) => {
       const percentage = `${Math.round(candidate.overallScore)}%`
       const explanation = candidate.explanation?.summary
         ?? `${candidate.candidate.fullName} was evaluated against the selected role.`
+      const strengths = candidate.explanation?.strengths ?? 'No major strengths were highlighted.'
+      const notes = candidate.explanation?.notes ?? 'No additional reviewer notes were generated.'
       const gapSummary = candidate.skillGaps?.length
         ? candidate.skillGaps.map((gap) => gap.skillName).join(', ')
         : 'No major matching gaps detected.'
@@ -151,14 +183,38 @@ function App() {
         name: candidate.candidate.fullName,
         score: percentage,
         summary: explanation,
+        recommendation: candidate.recommendation,
+        strengths,
+        notes,
         gaps: gapSummary,
+        gapCount: candidate.skillGaps?.length ?? 0,
+        extractionWarning: candidate.extractionWarning ?? '',
+        scoreBreakdown: [
+          { label: 'Skills', value: Math.round(candidate.skillScore ?? 0) },
+          { label: 'Experience', value: Math.round(candidate.experienceScore ?? 0) },
+          { label: 'Projects', value: Math.round(candidate.projectScore ?? 0) },
+          { label: 'Semantic', value: Math.round(candidate.semanticScore ?? 0) },
+        ],
       }
     })
   }, [candidateDisplayCount, rankingReport])
 
   const maxDisplayCount = rankingReport?.rankedCandidates?.length
     ? Math.min(6, Math.max(1, rankingReport.rankedCandidates.length))
-    : Math.min(6, fallbackRankedCandidates.length)
+    : 1
+
+  const topCandidateName = useMemo(() => {
+    if (!rankingReport?.rankedCandidates?.length) {
+      return 'No candidate yet'
+    }
+
+    return rankingReport.rankedCandidates[0]?.candidate?.fullName ?? 'No candidate yet'
+  }, [rankingReport])
+
+  const extractionWarningCount = useMemo(
+    () => rankingReport?.rankedCandidates?.filter((candidate) => candidate.extractionWarning).length ?? 0,
+    [rankingReport],
+  )
 
   function handleCandidateFilesChange(event) {
     const newFiles = Array.from(event.target.files ?? [])
@@ -247,9 +303,18 @@ function App() {
     event.preventDefault()
 
     setUploadError('')
+    setJobPostingMessage('')
 
-    if (!jobDescriptionFile && !jobDescriptionText.trim()) {
-      setUploadError('Please attach a job description file or paste the job description text.')
+    const hasUploadedJobDescription = Boolean(jobDescriptionFile)
+    const hasPastedJobDescription = Boolean(jobDescriptionText.trim())
+
+    if (jobDescriptionInputMode === 'upload' && !hasUploadedJobDescription) {
+      setUploadError('Please upload a job description file.')
+      return
+    }
+
+    if (jobDescriptionInputMode === 'paste' && !hasPastedJobDescription) {
+      setUploadError('Please paste the job description text.')
       return
     }
 
@@ -260,39 +325,57 @@ function App() {
 
     let jobPostingId = selectedJobPostingId
 
-      if (jobPostingMode === 'custom') {
-        if (!jobDescriptionText.trim() && !jobDescriptionFile) {
-          setUploadError('Please paste the custom job description or upload a job description file.')
-          return
-        }
-      } else if (!selectedJobPostingId) {
-        setUploadError('Please select a job posting before uploading documents.')
+    if (jobPostingMode === 'custom') {
+      if (jobDescriptionInputMode === 'upload' && !hasUploadedJobDescription) {
+        setUploadError('Please upload the custom job description file.')
         return
       }
+
+      if (jobDescriptionInputMode === 'paste' && !hasPastedJobDescription) {
+        setUploadError('Please paste the custom job description.')
+        return
+      }
+    } else if (!selectedJobPostingId && !hasUploadedJobDescription && !hasPastedJobDescription) {
+      setUploadError('Please select an existing job posting or provide a job description to screen candidates.')
+      return
+    }
 
     setIsSubmitting(true)
     setUploadMessage('Uploading files and generating ranking report...')
 
-      try {
-        if (jobPostingMode === 'custom') {
-          const createdJobPosting = await createCustomJobPosting()
-          if (!createdJobPosting) {
-            throw new Error('Unable to create the custom job posting.')
-          }
-          jobPostingId = createdJobPosting.id
+    try {
+      if (jobPostingMode === 'custom') {
+        const createdJobPosting = await createCustomJobPosting()
+        if (!createdJobPosting) {
+          throw new Error('Unable to create the custom job posting.')
         }
+        jobPostingId = createdJobPosting.id
+      } else {
+        const latestJobPostings = await fetchJobPostings()
+        syncJobPostings(latestJobPostings)
+
+        if (jobPostingId) {
+          const validSelectedJobPosting = latestJobPostings.find((jobPosting) => jobPosting.id === jobPostingId)
+          if (!validSelectedJobPosting) {
+            jobPostingId = ''
+            setSelectedJobPostingId('')
+            setJobPostingMessage('Your previous job posting selection is no longer available. The upload will now use the job description you provided unless you select another saved posting.')
+          }
+        }
+      }
 
       const formData = new FormData()
-      formData.append('jobPostingId', jobPostingId)
+      if (jobPostingId) {
+        formData.append('jobPostingId', jobPostingId)
+      }
 
-      const resolvedJobDescriptionFile = jobDescriptionFile
-        ?? new File(
-          [jobDescriptionText.trim()],
-          'job-description.txt',
-          { type: 'text/plain' },
-        )
+      if (jobDescriptionInputMode === 'upload' && jobDescriptionFile) {
+        formData.append('jobDescriptionFile', jobDescriptionFile)
+      }
 
-      formData.append('jobDescriptionFile', resolvedJobDescriptionFile)
+      if (jobDescriptionInputMode === 'paste' && jobDescriptionText.trim()) {
+        formData.append('jobDescriptionText', jobDescriptionText.trim())
+      }
 
       candidateFiles.forEach((file, index) => {
         const baseName = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]+/g, ' ').trim()
@@ -310,7 +393,18 @@ function App() {
       })
 
       if (!uploadResponse.ok) {
-        throw new Error('The upload request failed. Please check the selected files and try again.')
+        let errorMessage = 'The upload request failed. Please check the selected files and try again.'
+
+        try {
+          const errorBody = await uploadResponse.json()
+          if (errorBody?.message) {
+            errorMessage = errorBody.message
+          }
+        } catch {
+          // Ignore JSON parsing errors and keep the default message.
+        }
+
+        throw new Error(errorMessage)
       }
 
       const batchResult = await uploadResponse.json()
@@ -330,6 +424,36 @@ function App() {
     } finally {
       setIsSubmitting(false)
     }
+  }
+
+  function handleResetWorkflow() {
+    if (jobDescriptionFileInputRef.current) {
+      jobDescriptionFileInputRef.current.value = ''
+    }
+
+    if (candidateFilesInputRef.current) {
+      candidateFilesInputRef.current.value = ''
+    }
+
+    setJobPostingMode('existing')
+    setJobDescriptionInputMode('upload')
+    setSelectedJobPostingId('')
+    setJobDescriptionFile(null)
+    setJobDescriptionText('')
+    setCustomJobPosting({
+      title: jobTitleOptions[0],
+      department: departmentOptions[0],
+      location: locationOptions[0],
+      minimumYearsExperience: 0,
+    })
+    setCandidateFiles([])
+    setIsSubmitting(false)
+    setUploadError('')
+    setJobPostingMessage('')
+    setLastBatch(null)
+    setRankingReport(null)
+    setCandidateDisplayCount(6)
+    setUploadMessage('Select a job posting, attach the role description, and upload candidate CVs to generate a ranking report.')
   }
 
   return (
@@ -398,14 +522,30 @@ function App() {
                   value={selectedJobPostingId}
                   onChange={(event) => setSelectedJobPostingId(event.target.value)}
                 >
-                  <option value="">Select a job posting</option>
+                  <option value="">Use uploaded job description instead</option>
                   {jobPostings.map((jobPosting) => (
                     <option key={jobPosting.id} value={jobPosting.id}>
                       {jobPosting.title}
                     </option>
                   ))}
                 </select>
+                <p className="helper-text">
+                  Selecting a saved job posting is optional. If you leave this blank, the system will analyze the uploaded or pasted job description as the source of truth.
+                </p>
                 {jobPostingMessage ? <p className="helper-text helper-text--success">{jobPostingMessage}</p> : null}
+                {selectedJobPosting ? (
+                  <div className="job-preview">
+                    <div className="job-preview__top">
+                      <strong>{selectedJobPosting.title}</strong>
+                      <span>{selectedJobPosting.minimumYearsExperience}+ years</span>
+                    </div>
+                    <p>{selectedJobPosting.descriptionText}</p>
+                    <div className="job-preview__meta">
+                      <span>{selectedJobPosting.department || 'Engineering'}</span>
+                      <span>{selectedJobPosting.location || 'Remote'}</span>
+                    </div>
+                  </div>
+                ) : null}
               </>
             ) : (
               <div className="custom-job-grid">
@@ -481,30 +621,74 @@ function App() {
                 </div>
               </div>
             )}
+            <label className="field-label">Job Description Input</label>
+            <div className="mode-toggle mode-toggle--compact">
+              <button
+                type="button"
+                className={`mode-toggle__button${jobDescriptionInputMode === 'upload' ? ' is-active' : ''}`}
+                onClick={() => {
+                  setJobDescriptionInputMode('upload')
+                  setJobDescriptionText('')
+                }}
+              >
+                Upload File
+              </button>
+              <button
+                type="button"
+                className={`mode-toggle__button${jobDescriptionInputMode === 'paste' ? ' is-active' : ''}`}
+                onClick={() => {
+                  setJobDescriptionInputMode('paste')
+                  setJobDescriptionFile(null)
+                  if (jobDescriptionFileInputRef.current) {
+                    jobDescriptionFileInputRef.current.value = ''
+                  }
+                }}
+              >
+                Paste Text
+              </button>
+            </div>
             <label className="field-label" htmlFor="job-description-file">Job Description File</label>
             <input
               id="job-description-file"
+              ref={jobDescriptionFileInputRef}
               className="form-input"
               type="file"
               accept=".pdf,.doc,.docx,.txt"
-              onChange={(event) => setJobDescriptionFile(event.target.files?.[0] ?? null)}
+              disabled={jobDescriptionInputMode !== 'upload'}
+              onChange={(event) => {
+                setJobDescriptionFile(event.target.files?.[0] ?? null)
+                if (event.target.files?.[0]) {
+                  setJobDescriptionText('')
+                }
+              }}
             />
             <label className="field-label" htmlFor="job-description-text">Paste Job Description</label>
             <textarea
               id="job-description-text"
               className="form-textarea"
               rows="6"
-              placeholder="Paste the job description here if you do not want to upload a file."
+              placeholder="Paste the job description here."
               value={jobDescriptionText}
-              onChange={(event) => setJobDescriptionText(event.target.value)}
+              disabled={jobDescriptionInputMode !== 'paste'}
+              onChange={(event) => {
+                setJobDescriptionText(event.target.value)
+                if (event.target.value) {
+                  setJobDescriptionFile(null)
+                  if (jobDescriptionFileInputRef.current) {
+                    jobDescriptionFileInputRef.current.value = ''
+                  }
+                }
+              }}
             />
             <div className="mock-dropzone">
               <span>
-                {jobDescriptionFile
+                {jobDescriptionInputMode === 'upload' && jobDescriptionFile
                   ? `Selected file: ${jobDescriptionFile.name}`
-                  : jobDescriptionText.trim()
+                  : jobDescriptionInputMode === 'paste' && jobDescriptionText.trim()
                     ? 'Pasted job description will be used for screening.'
-                    : 'Attach the job description document or paste the text.'}
+                    : jobDescriptionInputMode === 'upload'
+                      ? 'Upload one job description file for screening.'
+                      : 'Paste one job description for screening.'}
               </span>
             </div>
             {jobPostingMode === 'custom' ? (
@@ -527,6 +711,7 @@ function App() {
             <label className="field-label" htmlFor="candidate-cv-files">Candidate CV Files</label>
             <input
               id="candidate-cv-files"
+              ref={candidateFilesInputRef}
               className="form-input"
               type="file"
               accept=".pdf,.doc,.docx,.txt"
@@ -571,6 +756,14 @@ function App() {
             <button className="submit-button" type="submit" disabled={isSubmitting}>
               {isSubmitting ? 'Processing Upload...' : 'Upload And Generate Ranking'}
             </button>
+            <button
+              className="secondary-submit-button"
+              type="button"
+              onClick={handleResetWorkflow}
+              disabled={isSubmitting}
+            >
+              Reset App
+            </button>
             <p className="upload-status">{uploadMessage}</p>
             {uploadError ? <p className="upload-error">{uploadError}</p> : null}
             {lastBatch ? (
@@ -587,6 +780,16 @@ function App() {
           <div>
             <p className="card-kicker">Step 4</p>
             <h3>Top {candidateDisplayCount} Ranked Candidates</h3>
+            <div className="results-badges">
+              <span className={`status-badge ${rankingReport ? (rankingReport.aiUsed ? 'status-badge--ai' : 'status-badge--fallback') : ''}`}>
+                {rankingReport ? (rankingReport.aiUsed ? 'AI Ranked' : 'Fallback Ranked') : 'No Ranking Yet'}
+              </span>
+              <span className="status-badge">{topCandidateName}</span>
+              <span className="status-badge">{rankingReport?.totalCandidates ?? 0} Evaluated</span>
+              {extractionWarningCount > 0 ? (
+                <span className="status-badge status-badge--warning">{extractionWarningCount} Extraction Warning{extractionWarningCount > 1 ? 's' : ''}</span>
+              ) : null}
+            </div>
           </div>
           <div className="results-controls">
             <p className="results-copy">
@@ -610,23 +813,80 @@ function App() {
           </div>
         </div>
 
+        {rankingReport?.jobPosting ? (
+          <>
+            {rankingReport.aiStatusMessage ? (
+              <div className={`report-banner ${rankingReport.aiUsed ? 'report-banner--ai' : 'report-banner--fallback'}`}>
+                {rankingReport.aiStatusMessage}
+              </div>
+            ) : null}
+            <div className="report-overview">
+              <div>
+              <span className="report-overview__label">Role</span>
+              <strong>{rankingReport.jobPosting.title}</strong>
+              </div>
+              <div>
+              <span className="report-overview__label">Department</span>
+              <strong>{rankingReport.jobPosting.department || 'Engineering'}</strong>
+              </div>
+              <div>
+              <span className="report-overview__label">Location</span>
+              <strong>{rankingReport.jobPosting.location || 'Remote'}</strong>
+              </div>
+              <div>
+              <span className="report-overview__label">Generated</span>
+              <strong>{new Date(rankingReport.generatedAtUtc).toLocaleString()}</strong>
+              </div>
+            </div>
+          </>
+        ) : null}
+
         <div className="candidate-results">
-          {rankedCandidates.map((candidate, index) => (
+          {rankedCandidates.length > 0 ? rankedCandidates.map((candidate, index) => (
             <article key={candidate.name} className="candidate-card">
               <div className="candidate-card__top">
                 <span className="candidate-rank">#{index + 1}</span>
                 <span className="candidate-score">{candidate.score} Match</span>
               </div>
               <h4>{candidate.name}</h4>
+              <p className="candidate-recommendation">{candidate.recommendation ?? 'Preliminary Review'}</p>
               <p className="candidate-summary">{candidate.summary}</p>
               <div className="candidate-progress" aria-hidden="true">
                 <div className="candidate-progress__fill" style={{ width: candidate.score }} />
               </div>
+              {candidate.scoreBreakdown ? (
+                <div className="score-breakdown">
+                  {candidate.scoreBreakdown.map((item) => (
+                    <div key={`${candidate.name}-${item.label}`} className="score-breakdown__item">
+                      <span>{item.label}</span>
+                      <strong>{item.value}</strong>
+                    </div>
+                  ))}
+                </div>
+              ) : null}
+              <p className="candidate-strength">
+                <strong>Strengths:</strong> {candidate.strengths ?? candidate.summary}
+              </p>
               <p className="candidate-gap">
-                <strong>Gap:</strong> {candidate.gaps}
+                <strong>Gaps:</strong> {candidate.gaps}
+              </p>
+              {candidate.extractionWarning ? (
+                <p className="candidate-warning">
+                  <strong>Extraction Warning:</strong> {candidate.extractionWarning}
+                </p>
+              ) : null}
+              <p className="candidate-note">
+                <strong>Review Note:</strong> {candidate.notes ?? `Gap count: ${candidate.gapCount ?? 0}`}
               </p>
             </article>
-          ))}
+          )) : (
+            <article className="candidate-card candidate-card--empty">
+              <h4>No ranking generated yet</h4>
+              <p className="candidate-summary">
+                Upload a job description and at least one CV, then run screening to see ranked candidates here.
+              </p>
+            </article>
+          )}
         </div>
       </section>
 

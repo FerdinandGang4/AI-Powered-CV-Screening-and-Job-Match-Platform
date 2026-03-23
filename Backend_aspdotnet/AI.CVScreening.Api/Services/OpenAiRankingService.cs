@@ -5,6 +5,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Text.RegularExpressions;
 
 namespace AI.CVScreening.Api.Services;
 
@@ -30,6 +31,7 @@ public sealed class OpenAiRankingService(
 
         using var request = new HttpRequestMessage(HttpMethod.Post, _options.Endpoint);
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _options.ApiKey);
+        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
         var payload = BuildRequestPayload(jobPosting, jobDescriptionText, candidates);
         request.Content = new StringContent(payload.ToJsonString(), Encoding.UTF8, "application/json");
@@ -58,6 +60,8 @@ public sealed class OpenAiRankingService(
         {
             throw new InvalidOperationException("OpenAI ranking response did not contain structured output text.");
         }
+
+        outputJson = CleanJsonPayload(outputJson);
 
         var rankingResponse = JsonSerializer.Deserialize<OpenAiRankingResponse>(outputJson, JsonOptions)
             ?? throw new InvalidOperationException("OpenAI ranking response could not be parsed.");
@@ -88,6 +92,8 @@ public sealed class OpenAiRankingService(
                     You are an expert technical recruiting assistant. Rank candidates for a job posting.
                     Return only structured JSON that follows the schema exactly.
                     Be strict about missing mandatory skills or insufficient experience.
+                    Use the actual CV evidence provided. If a candidate CV has thin evidence, score conservatively.
+                    Different candidates should not receive identical scores unless the evidence is genuinely identical.
                     """),
                 BuildMessage("user", BuildPrompt(jobPosting, jobDescriptionText, candidates))
             },
@@ -154,8 +160,22 @@ public sealed class OpenAiRankingService(
 
         builder.AppendLine("Rank every candidate and give realistic scores from 0 to 100.");
         builder.AppendLine("Missing mandatory skills must materially lower the score.");
+        builder.AppendLine("Heavily penalize thin or weak evidence. Do not invent experience, skills, or projects that are not supported by the CV text.");
+        builder.AppendLine("Differentiate candidates clearly when their extracted evidence differs.");
         builder.AppendLine("Use concise recruiter-friendly explanations.");
         return builder.ToString();
+    }
+
+    private static string CleanJsonPayload(string outputJson)
+    {
+        var trimmed = outputJson.Trim();
+        if (trimmed.StartsWith("```", StringComparison.Ordinal))
+        {
+            trimmed = Regex.Replace(trimmed, @"^```(?:json)?\s*", string.Empty, RegexOptions.IgnoreCase);
+            trimmed = Regex.Replace(trimmed, @"\s*```$", string.Empty, RegexOptions.IgnoreCase);
+        }
+
+        return trimmed.Trim();
     }
 
     private static JsonObject BuildResponseSchema()

@@ -10,8 +10,15 @@ public sealed class ScreeningController(IScreeningService screeningService) : Ba
     [HttpPost("batches")]
     public async Task<ActionResult<ScreeningBatchUploadResponse>> CreateBatch([FromForm] ScreeningBatchUploadRequest request, CancellationToken cancellationToken)
     {
-        var response = await screeningService.CreateBatchAsync(request, cancellationToken);
-        return Ok(response);
+        try
+        {
+            var response = await screeningService.CreateBatchAsync(request, cancellationToken);
+            return Ok(response);
+        }
+        catch (InvalidOperationException exception)
+        {
+            return BadRequest(new { message = exception.Message });
+        }
     }
 
     [HttpGet("reports/{jobPostingId:guid}")]
