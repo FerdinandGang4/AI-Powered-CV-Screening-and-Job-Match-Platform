@@ -25,4 +25,16 @@ public sealed class ScreeningController(IScreeningService screeningService) : Ba
 
         return Ok(report);
     }
+
+    [HttpGet("batches/{batchId:guid}/report")]
+    public ActionResult<RankingReportDto> GetRankingReportByBatchId(Guid batchId)
+    {
+        var report = screeningService.GetRankingReportByBatchId(batchId);
+        if (report is null)
+        {
+            return NotFound();
+        }
+
+        return Ok(report);
+    }
 }

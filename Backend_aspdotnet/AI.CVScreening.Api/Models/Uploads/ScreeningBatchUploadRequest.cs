@@ -4,9 +4,12 @@ namespace AI.CVScreening.Api.Models.Uploads;
 
 public sealed class ScreeningBatchUploadRequest
 {
+    public Guid? JobPostingId { get; set; }
+
     [Required]
     public IFormFile? JobDescriptionFile { get; set; }
 
+    [Required]
     [MinLength(1)]
-    public IReadOnlyCollection<CandidateCvUploadItem> CandidateCvs { get; set; } = Array.Empty<CandidateCvUploadItem>();
+    public List<CandidateCvUploadItem> CandidateCvs { get; set; } = [];
 }

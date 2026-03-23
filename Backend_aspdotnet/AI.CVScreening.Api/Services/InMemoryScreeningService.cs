@@ -9,13 +9,26 @@ namespace AI.CVScreening.Api.Services;
 
 public sealed class InMemoryScreeningService(
     IJobPostingService jobPostingService,
-    ICandidateService candidateService) : IScreeningService
+    ICandidateService candidateService,
+    AppMemoryStore store) : IScreeningService
 {
     public ScreeningBatchUploadResponse CreateBatch(ScreeningBatchUploadRequest request)
     {
+        var jobPostingId = request.JobPostingId
+            ?? jobPostingService.GetAll().FirstOrDefault()?.Id
+            ?? throw new InvalidOperationException("No job posting is available for candidate screening.");
+
+        var rankingReport = GetRankingReport(jobPostingId)
+            ?? throw new InvalidOperationException("Unable to generate a ranking report for the selected job posting.");
+
+        var batchId = Guid.NewGuid();
+        store.ReportsByBatchId[batchId] = rankingReport;
+        store.BatchToJobPostingMap[batchId] = jobPostingId;
+
         return new ScreeningBatchUploadResponse
         {
-            BatchId = Guid.NewGuid(),
+            BatchId = batchId,
+            JobPostingId = jobPostingId,
             JobDescription = new UploadedDocumentResultDto
             {
                 DocumentId = Guid.NewGuid(),
@@ -32,8 +45,13 @@ public sealed class InMemoryScreeningService(
                     ProcessingStatus = DocumentProcessingStatus.Uploaded
                 })
                 .ToArray(),
-            Message = "Documents uploaded successfully. Parsing and evaluation can start next."
+            Message = "Documents uploaded successfully. A ranking report has been generated for the selected job posting."
         };
+    }
+
+    public RankingReportDto? GetRankingReportByBatchId(Guid batchId)
+    {
+        return store.ReportsByBatchId.GetValueOrDefault(batchId);
     }
 
     public RankingReportDto? GetRankingReport(Guid jobPostingId)

@@ -5,53 +5,60 @@ namespace AI.CVScreening.Api.Services;
 
 public sealed class InMemoryJobPostingService : IJobPostingService
 {
-    private readonly List<JobPostingDetailDto> _jobPostings =
-    [
-        new()
+    private readonly AppMemoryStore _store;
+
+    public InMemoryJobPostingService(AppMemoryStore store)
+    {
+        _store = store;
+
+        if (_store.JobPostings.Count == 0)
         {
-            Id = Guid.NewGuid(),
-            Title = "Senior ASP.NET Developer",
-            Department = "Engineering",
-            DescriptionText = "Build scalable backend APIs for CV analysis and candidate ranking.",
-            MinimumYearsExperience = 4,
-            Location = "Remote",
-            CreatedAtUtc = DateTime.UtcNow,
-            Requirements =
-            [
-                new()
-                {
-                    Id = Guid.NewGuid(),
-                    RequirementType = RequirementType.Skill,
-                    Name = "ASP.NET Core",
-                    Priority = RequirementPriority.Critical,
-                    Weight = 35,
-                    IsMandatory = true
-                },
-                new()
-                {
-                    Id = Guid.NewGuid(),
-                    RequirementType = RequirementType.Skill,
-                    Name = "C#",
-                    Priority = RequirementPriority.Critical,
-                    Weight = 30,
-                    IsMandatory = true
-                },
-                new()
-                {
-                    Id = Guid.NewGuid(),
-                    RequirementType = RequirementType.Experience,
-                    Name = "Backend API Development",
-                    Priority = RequirementPriority.High,
-                    Weight = 20,
-                    IsMandatory = true
-                }
-            ]
+            _store.JobPostings.Add(new JobPostingDetailDto
+            {
+                Id = Guid.NewGuid(),
+                Title = "Senior ASP.NET Developer",
+                Department = "Engineering",
+                DescriptionText = "Build scalable backend APIs for CV analysis and candidate ranking.",
+                MinimumYearsExperience = 4,
+                Location = "Remote",
+                CreatedAtUtc = DateTime.UtcNow,
+                Requirements =
+                [
+                    new()
+                    {
+                        Id = Guid.NewGuid(),
+                        RequirementType = RequirementType.Skill,
+                        Name = "ASP.NET Core",
+                        Priority = RequirementPriority.Critical,
+                        Weight = 35,
+                        IsMandatory = true
+                    },
+                    new()
+                    {
+                        Id = Guid.NewGuid(),
+                        RequirementType = RequirementType.Skill,
+                        Name = "C#",
+                        Priority = RequirementPriority.Critical,
+                        Weight = 30,
+                        IsMandatory = true
+                    },
+                    new()
+                    {
+                        Id = Guid.NewGuid(),
+                        RequirementType = RequirementType.Experience,
+                        Name = "Backend API Development",
+                        Priority = RequirementPriority.High,
+                        Weight = 20,
+                        IsMandatory = true
+                    }
+                ]
+            });
         }
-    ];
+    }
 
     public IReadOnlyCollection<JobPostingSummaryDto> GetAll()
     {
-        return _jobPostings
+        return _store.JobPostings
             .OrderByDescending(jobPosting => jobPosting.CreatedAtUtc)
             .Select(MapToSummary)
             .ToArray();
@@ -59,7 +66,7 @@ public sealed class InMemoryJobPostingService : IJobPostingService
 
     public JobPostingDetailDto? GetById(Guid id)
     {
-        return _jobPostings.FirstOrDefault(jobPosting => jobPosting.Id == id);
+        return _store.JobPostings.FirstOrDefault(jobPosting => jobPosting.Id == id);
     }
 
     public JobPostingDetailDto Create(CreateJobPostingRequest request)
@@ -86,7 +93,7 @@ public sealed class InMemoryJobPostingService : IJobPostingService
                 .ToArray()
         };
 
-        _jobPostings.Add(jobPosting);
+        _store.JobPostings.Add(jobPosting);
         return jobPosting;
     }
 

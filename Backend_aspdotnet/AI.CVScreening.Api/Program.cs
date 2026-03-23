@@ -5,7 +5,6 @@ var builder = WebApplication.CreateBuilder(args);
 const string reactClientCorsPolicy = "ReactClient";
 
 builder.Services.AddControllers();
-builder.Services.AddOpenApi();
 
 builder.Services.AddCors(options =>
 {
@@ -29,18 +28,18 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddSingleton<AppMemoryStore>();
 builder.Services.AddSingleton<IJobPostingService, InMemoryJobPostingService>();
 builder.Services.AddSingleton<ICandidateService, InMemoryCandidateService>();
 builder.Services.AddSingleton<IScreeningService, InMemoryScreeningService>();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+if (!app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseHttpsRedirection();
 }
 
-app.UseHttpsRedirection();
 app.UseCors(reactClientCorsPolicy);
 app.UseAuthorization();
 
