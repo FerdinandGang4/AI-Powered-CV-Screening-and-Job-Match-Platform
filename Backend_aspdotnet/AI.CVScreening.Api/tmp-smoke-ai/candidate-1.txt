@@ -1,0 +1,1 @@
+Candidate one has 6 years experience in C#, ASP.NET Core, SQL, Azure, REST API development and backend systems.

@@ -5,7 +5,7 @@ namespace AI.CVScreening.Api.Services;
 
 public interface IScreeningService
 {
-    ScreeningBatchUploadResponse CreateBatch(ScreeningBatchUploadRequest request);
+    Task<ScreeningBatchUploadResponse> CreateBatchAsync(ScreeningBatchUploadRequest request, CancellationToken cancellationToken = default);
     RankingReportDto? GetRankingReportByBatchId(Guid batchId);
     RankingReportDto? GetRankingReport(Guid jobPostingId);
 }

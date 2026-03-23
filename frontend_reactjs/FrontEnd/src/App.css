@@ -252,6 +252,11 @@
   font-size: 0.82rem;
 }
 
+.helper-text--success {
+  color: #0f766e;
+  font-weight: 600;
+}
+
 .process-list {
   margin: 1rem 0 0;
   padding-left: 1.1rem;
@@ -282,6 +287,18 @@
 .submit-button:disabled {
   opacity: 0.7;
   cursor: progress;
+}
+
+.secondary-submit-button {
+  margin-top: 0.9rem;
+  width: 100%;
+  border: 1px solid rgba(39, 95, 134, 0.18);
+  border-radius: 14px;
+  padding: 0.8rem 1rem;
+  background: rgba(244, 249, 251, 0.96);
+  color: #17324a;
+  font-weight: 700;
+  cursor: pointer;
 }
 
 .upload-status,

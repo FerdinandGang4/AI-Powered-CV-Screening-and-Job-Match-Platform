@@ -10,4 +10,5 @@ public sealed class AppMemoryStore
     public List<CandidateProfileDto> Candidates { get; } = [];
     public Dictionary<Guid, RankingReportDto> ReportsByBatchId { get; } = [];
     public Dictionary<Guid, Guid> BatchToJobPostingMap { get; } = [];
+    public Dictionary<Guid, RankingReportDto> LatestReportsByJobPostingId { get; } = [];
 }

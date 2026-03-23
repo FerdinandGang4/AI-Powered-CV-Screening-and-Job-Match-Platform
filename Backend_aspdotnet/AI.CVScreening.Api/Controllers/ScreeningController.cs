@@ -8,9 +8,9 @@ namespace AI.CVScreening.Api.Controllers;
 public sealed class ScreeningController(IScreeningService screeningService) : BaseApiController
 {
     [HttpPost("batches")]
-    public ActionResult<ScreeningBatchUploadResponse> CreateBatch([FromForm] ScreeningBatchUploadRequest request)
+    public async Task<ActionResult<ScreeningBatchUploadResponse>> CreateBatch([FromForm] ScreeningBatchUploadRequest request, CancellationToken cancellationToken)
     {
-        var response = screeningService.CreateBatch(request);
+        var response = await screeningService.CreateBatchAsync(request, cancellationToken);
         return Ok(response);
     }
 

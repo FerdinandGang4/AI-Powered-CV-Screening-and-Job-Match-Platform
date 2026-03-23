@@ -10,6 +10,33 @@ const navigationItems = [
 
 const API_BASE_URL = 'http://localhost:5282/api'
 
+const jobTitleOptions = [
+  'Senior ASP.NET Developer',
+  'ASP.NET Backend Developer',
+  'Full Stack .NET Developer',
+  'Software Engineer',
+  'Backend API Engineer',
+  'AI/ML Engineer',
+]
+
+const departmentOptions = [
+  'Engineering',
+  'Software Development',
+  'Information Technology',
+  'Data Science',
+  'Human Resources',
+  'Product Development',
+]
+
+const locationOptions = [
+  'Remote',
+  'Onsite',
+  'Hybrid',
+  'Chicago, IL',
+  'Austin, TX',
+  'New York, NY',
+]
+
 const fallbackRankedCandidates = [
   {
     name: 'Amina Hassan',
@@ -41,6 +68,12 @@ const fallbackRankedCandidates = [
     summary: 'Shows transferable skills and a promising technical background.',
     gaps: 'Needs more direct C# backend experience and stronger role alignment.',
   },
+  {
+    name: 'Samuel Okoro',
+    score: '52%',
+    summary: 'Has a useful technical foundation and some system support experience.',
+    gaps: 'Needs stronger ASP.NET Core, backend API, and SQL project alignment.',
+  },
 ]
 
 function App() {
@@ -50,18 +83,19 @@ function App() {
   const [jobDescriptionFile, setJobDescriptionFile] = useState(null)
   const [jobDescriptionText, setJobDescriptionText] = useState('')
   const [customJobPosting, setCustomJobPosting] = useState({
-    title: '',
-    department: '',
-    location: '',
+    title: jobTitleOptions[0],
+    department: departmentOptions[0],
+    location: locationOptions[0],
     minimumYearsExperience: 0,
   })
   const [candidateFiles, setCandidateFiles] = useState([])
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [uploadMessage, setUploadMessage] = useState('Select a job posting, attach the role description, and upload candidate CVs to generate a ranking report.')
   const [uploadError, setUploadError] = useState('')
+  const [jobPostingMessage, setJobPostingMessage] = useState('')
   const [lastBatch, setLastBatch] = useState(null)
   const [rankingReport, setRankingReport] = useState(null)
-  const [candidateDisplayCount, setCandidateDisplayCount] = useState(5)
+  const [candidateDisplayCount, setCandidateDisplayCount] = useState(6)
 
   useEffect(() => {
     let ignore = false
@@ -155,6 +189,60 @@ function App() {
     )
   }
 
+  async function createCustomJobPosting() {
+    setUploadError('')
+    setJobPostingMessage('')
+
+    if (!customJobPosting.title.trim()) {
+      setUploadError('Please provide a custom job posting title.')
+      return null
+    }
+
+    if (!jobDescriptionText.trim() && !jobDescriptionFile) {
+      setUploadError('Please add a pasted job description or upload a job description file before saving the custom job posting.')
+      return null
+    }
+
+    const createResponse = await fetch(`${API_BASE_URL}/jobpostings`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        title: customJobPosting.title.trim(),
+        department: customJobPosting.department.trim(),
+        descriptionText: jobDescriptionText.trim() || 'Uploaded job description document',
+        minimumYearsExperience: Number(customJobPosting.minimumYearsExperience) || 0,
+        location: customJobPosting.location.trim(),
+        requirements: [],
+      }),
+    })
+
+    if (!createResponse.ok) {
+      throw new Error('Unable to create the custom job posting.')
+    }
+
+    const createdJobPosting = await createResponse.json()
+
+    setJobPostings((current) => {
+      const withoutDuplicate = current.filter((item) => item.id !== createdJobPosting.id)
+      return [createdJobPosting, ...withoutDuplicate]
+    })
+    setSelectedJobPostingId(createdJobPosting.id)
+    setJobPostingMode('existing')
+    setJobPostingMessage(`Custom job posting "${createdJobPosting.title}" was saved and is now available in Existing Job Posting.`)
+
+    return createdJobPosting
+  }
+
+  async function handleSaveCustomJobPosting() {
+    try {
+      await createCustomJobPosting()
+    } catch (error) {
+      setUploadError(error.message)
+    }
+  }
+
   async function handleSubmit(event) {
     event.preventDefault()
 
@@ -172,50 +260,27 @@ function App() {
 
     let jobPostingId = selectedJobPostingId
 
-    if (jobPostingMode === 'custom') {
-      if (!customJobPosting.title.trim()) {
-        setUploadError('Please provide a custom job posting title.')
+      if (jobPostingMode === 'custom') {
+        if (!jobDescriptionText.trim() && !jobDescriptionFile) {
+          setUploadError('Please paste the custom job description or upload a job description file.')
+          return
+        }
+      } else if (!selectedJobPostingId) {
+        setUploadError('Please select a job posting before uploading documents.')
         return
       }
-
-      if (!jobDescriptionText.trim() && !jobDescriptionFile) {
-        setUploadError('Please paste the custom job description or upload a job description file.')
-        return
-      }
-    } else if (!selectedJobPostingId) {
-      setUploadError('Please select a job posting before uploading documents.')
-      return
-    }
 
     setIsSubmitting(true)
     setUploadMessage('Uploading files and generating ranking report...')
 
-    try {
-      if (jobPostingMode === 'custom') {
-        const createResponse = await fetch(`${API_BASE_URL}/jobpostings`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            title: customJobPosting.title.trim(),
-            department: customJobPosting.department.trim(),
-            descriptionText: jobDescriptionText.trim() || 'Uploaded job description document',
-            minimumYearsExperience: Number(customJobPosting.minimumYearsExperience) || 0,
-            location: customJobPosting.location.trim(),
-            requirements: [],
-          }),
-        })
-
-        if (!createResponse.ok) {
-          throw new Error('Unable to create the custom job posting.')
+      try {
+        if (jobPostingMode === 'custom') {
+          const createdJobPosting = await createCustomJobPosting()
+          if (!createdJobPosting) {
+            throw new Error('Unable to create the custom job posting.')
+          }
+          jobPostingId = createdJobPosting.id
         }
-
-        const createdJobPosting = await createResponse.json()
-        jobPostingId = createdJobPosting.id
-        setSelectedJobPostingId(createdJobPosting.id)
-        setJobPostings((current) => [createdJobPosting, ...current])
-      }
 
       const formData = new FormData()
       formData.append('jobPostingId', jobPostingId)
@@ -340,44 +405,63 @@ function App() {
                     </option>
                   ))}
                 </select>
+                {jobPostingMessage ? <p className="helper-text helper-text--success">{jobPostingMessage}</p> : null}
               </>
             ) : (
               <div className="custom-job-grid">
                 <div>
                   <label className="field-label" htmlFor="custom-title">Job Title</label>
-                  <input
+                  <select
                     id="custom-title"
-                    className="form-input"
-                    type="text"
+                    className="form-select"
                     value={customJobPosting.title}
                     onChange={(event) =>
                       setCustomJobPosting((current) => ({ ...current, title: event.target.value }))
                     }
-                  />
+                  >
+                    <option value="">Select job title</option>
+                    {jobTitleOptions.map((title) => (
+                      <option key={title} value={title}>
+                        {title}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div>
                   <label className="field-label" htmlFor="custom-department">Department</label>
-                  <input
+                  <select
                     id="custom-department"
-                    className="form-input"
-                    type="text"
+                    className="form-select"
                     value={customJobPosting.department}
                     onChange={(event) =>
                       setCustomJobPosting((current) => ({ ...current, department: event.target.value }))
                     }
-                  />
+                  >
+                    <option value="">Select department</option>
+                    {departmentOptions.map((department) => (
+                      <option key={department} value={department}>
+                        {department}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div>
                   <label className="field-label" htmlFor="custom-location">Location</label>
-                  <input
+                  <select
                     id="custom-location"
-                    className="form-input"
-                    type="text"
+                    className="form-select"
                     value={customJobPosting.location}
                     onChange={(event) =>
                       setCustomJobPosting((current) => ({ ...current, location: event.target.value }))
                     }
-                  />
+                  >
+                    <option value="">Select location</option>
+                    {locationOptions.map((location) => (
+                      <option key={location} value={location}>
+                        {location}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div>
                   <label className="field-label" htmlFor="custom-years">Minimum Years Experience</label>
@@ -423,6 +507,15 @@ function App() {
                     : 'Attach the job description document or paste the text.'}
               </span>
             </div>
+            {jobPostingMode === 'custom' ? (
+              <button
+                type="button"
+                className="secondary-submit-button"
+                onClick={handleSaveCustomJobPosting}
+              >
+                Save Custom Job Posting
+              </button>
+            ) : null}
           </article>
 
           <article className="workspace-card upload-card">

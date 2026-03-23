@@ -1,0 +1,1 @@
+Brian Cole has 4 years experience with ASP.NET Core, React, Node.js and MongoDB. Built dashboards and some APIs, but limited Azure and SQL exposure.
