@@ -10,96 +10,23 @@ const navigationItems = [
 
 const API_BASE_URL = 'http://localhost:5282/api'
 
-const jobTitleOptions = [
-  'Senior ASP.NET Developer',
-  'ASP.NET Backend Developer',
-  'Full Stack .NET Developer',
-  'Software Engineer',
-  'Backend API Engineer',
-  'AI/ML Engineer',
-]
-
-const departmentOptions = [
-  'Engineering',
-  'Software Development',
-  'Information Technology',
-  'Data Science',
-  'Human Resources',
-  'Product Development',
-]
-
-const locationOptions = [
-  'Remote',
-  'Onsite',
-  'Hybrid',
-  'Chicago, IL',
-  'Austin, TX',
-  'New York, NY',
-]
-
-const fallbackRankedCandidates = [
-  {
-    name: 'Amina Hassan',
-    score: '91%',
-    summary: 'Strong fit for ASP.NET Core, C#, SQL, and backend API development.',
-    gaps: 'Minor Azure deployment depth gap.',
-  },
-  {
-    name: 'David Mensah',
-    score: '76%',
-    summary: 'Good engineering background with partial ASP.NET experience.',
-    gaps: 'Needs stronger backend specialization and more years of experience.',
-  },
-  {
-    name: 'Grace Njeri',
-    score: '68%',
-    summary: 'Relevant project work and solid problem-solving profile.',
-    gaps: 'Missing some required framework skills and less direct role alignment.',
-  },
-  {
-    name: 'Mark Otieno',
-    score: '64%',
-    summary: 'Useful software engineering foundation and some API exposure.',
-    gaps: 'Gap in ASP.NET Core depth and fewer relevant backend projects.',
-  },
-  {
-    name: 'Lilian Boateng',
-    score: '58%',
-    summary: 'Shows transferable skills and a promising technical background.',
-    gaps: 'Needs more direct C# backend experience and stronger role alignment.',
-  },
-  {
-    name: 'Samuel Okoro',
-    score: '52%',
-    summary: 'Has a useful technical foundation and some system support experience.',
-    gaps: 'Needs stronger ASP.NET Core, backend API, and SQL project alignment.',
-  },
-]
+const AUTH_STORAGE_KEY = 'cvscreening_recruiter_auth'
 
 function App() {
   const jobDescriptionFileInputRef = useRef(null)
   const candidateFilesInputRef = useRef(null)
-  const [jobPostings, setJobPostings] = useState([])
-  const [jobPostingMode, setJobPostingMode] = useState('existing')
   const [jobDescriptionInputMode, setJobDescriptionInputMode] = useState('upload')
-  const [selectedJobPostingId, setSelectedJobPostingId] = useState('')
   const [jobDescriptionFile, setJobDescriptionFile] = useState(null)
   const [jobDescriptionText, setJobDescriptionText] = useState('')
-  const [customJobPosting, setCustomJobPosting] = useState({
-    title: jobTitleOptions[0],
-    department: departmentOptions[0],
-    location: locationOptions[0],
-    minimumYearsExperience: 0,
-  })
   const [candidateFiles, setCandidateFiles] = useState([])
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [uploadMessage, setUploadMessage] = useState('Select a job posting, attach the role description, and upload candidate CVs to generate a ranking report.')
+  const [uploadMessage, setUploadMessage] = useState('Add a job description, upload candidate CVs, and generate a ranking report.')
   const [uploadError, setUploadError] = useState('')
-  const [jobPostingMessage, setJobPostingMessage] = useState('')
   const [lastBatch, setLastBatch] = useState(null)
   const [rankingReport, setRankingReport] = useState(null)
   const [candidateDisplayCount, setCandidateDisplayCount] = useState(6)
   const [currentUser, setCurrentUser] = useState(null)
+  const [authToken, setAuthToken] = useState('')
   const [showLoginModal, setShowLoginModal] = useState(false)
   const [loginForm, setLoginForm] = useState({
     email: '',
@@ -119,70 +46,48 @@ function App() {
   const [signUpMessage, setSignUpMessage] = useState('')
   const [signUpError, setSignUpError] = useState('')
   const [isSigningUp, setIsSigningUp] = useState(false)
-
-  const selectedJobPosting = useMemo(
-    () => jobPostings.find((jobPosting) => jobPosting.id === selectedJobPostingId) ?? null,
-    [jobPostings, selectedJobPostingId],
-  )
+  const [showGoogleModal, setShowGoogleModal] = useState(false)
+  const [googleForm, setGoogleForm] = useState({
+    fullName: '',
+    companyName: '',
+    email: '',
+  })
+  const [googleMessage, setGoogleMessage] = useState('')
+  const [googleError, setGoogleError] = useState('')
+  const [isSigningInWithGoogle, setIsSigningInWithGoogle] = useState(false)
 
   useEffect(() => {
-    let ignore = false
-
-    async function loadJobPostings() {
-      try {
-        const data = await fetchJobPostings()
-        if (!ignore) {
-          syncJobPostings(data)
-        }
-      } catch (error) {
-        if (!ignore) {
-          setUploadError(error.message)
-        }
-      }
+    const savedAuth = window.localStorage.getItem(AUTH_STORAGE_KEY)
+    if (!savedAuth) {
+      return
     }
 
-    loadJobPostings()
-
-    return () => {
-      ignore = true
+    try {
+      const parsedAuth = JSON.parse(savedAuth)
+      if (parsedAuth?.token && parsedAuth?.fullName) {
+        setAuthToken(parsedAuth.token)
+        setCurrentUser({
+          fullName: parsedAuth.fullName,
+          companyName: parsedAuth.companyName,
+          email: parsedAuth.email,
+        })
+      }
+    } catch {
+      window.localStorage.removeItem(AUTH_STORAGE_KEY)
     }
   }, [])
 
-  function syncJobPostings(data) {
-    setJobPostings(data)
-    setSelectedJobPostingId((current) => {
-      if (data.length === 0) {
-        return ''
-      }
-
-      if (!current) {
-        return ''
-      }
-
-      const stillExists = data.some((jobPosting) => jobPosting.id === current)
-      if (stillExists) {
-        return current
-      }
-
-      setJobPostingMessage('The previously selected job posting is no longer available. Leave the selector blank to use your uploaded or pasted job description, or choose another saved posting.')
-      return ''
-    })
-  }
-
-  async function fetchJobPostings() {
-    const response = await fetch(`${API_BASE_URL}/jobpostings`)
-    if (!response.ok) {
-      throw new Error('Unable to load job postings from the backend.')
-    }
-
-    return response.json()
+  function getAuthHeaders() {
+    return authToken
+      ? { Authorization: `Bearer ${authToken}` }
+      : {}
   }
 
   const quickStats = useMemo(() => [
-    { value: selectedJobPostingId || jobDescriptionFile || jobDescriptionText.trim() ? '1' : '0', label: 'Job description' },
+    { value: jobDescriptionFile || jobDescriptionText.trim() ? '1' : '0', label: 'Job description' },
     { value: `${candidateFiles.length}`, label: 'CV files uploaded' },
     { value: `Top ${candidateDisplayCount}`, label: 'Shortlisted results' },
-  ], [candidateDisplayCount, candidateFiles.length, jobDescriptionFile, jobDescriptionText, selectedJobPostingId])
+  ], [candidateDisplayCount, candidateFiles.length, jobDescriptionFile, jobDescriptionText])
 
   const rankedCandidates = useMemo(() => {
     if (!rankingReport?.rankedCandidates?.length) {
@@ -192,7 +97,7 @@ function App() {
     return rankingReport.rankedCandidates.slice(0, candidateDisplayCount).map((candidate) => {
       const percentage = `${Math.round(candidate.overallScore)}%`
       const explanation = candidate.explanation?.summary
-        ?? `${candidate.candidate.fullName} was evaluated against the selected role.`
+        ?? `${candidate.candidate.fullName} was evaluated against the provided job description.`
       const strengths = candidate.explanation?.strengths ?? 'No major strengths were highlighted.'
       const notes = candidate.explanation?.notes ?? 'No additional reviewer notes were generated.'
       const gapSummary = candidate.skillGaps?.length
@@ -265,65 +170,16 @@ function App() {
     )
   }
 
-  async function createCustomJobPosting() {
-    setUploadError('')
-    setJobPostingMessage('')
-
-    if (!customJobPosting.title.trim()) {
-      setUploadError('Please provide a custom job posting title.')
-      return null
-    }
-
-    if (!jobDescriptionText.trim() && !jobDescriptionFile) {
-      setUploadError('Please add a pasted job description or upload a job description file before saving the custom job posting.')
-      return null
-    }
-
-    const createResponse = await fetch(`${API_BASE_URL}/jobpostings`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        title: customJobPosting.title.trim(),
-        department: customJobPosting.department.trim(),
-        descriptionText: jobDescriptionText.trim() || 'Uploaded job description document',
-        minimumYearsExperience: Number(customJobPosting.minimumYearsExperience) || 0,
-        location: customJobPosting.location.trim(),
-        requirements: [],
-      }),
-    })
-
-    if (!createResponse.ok) {
-      throw new Error('Unable to create the custom job posting.')
-    }
-
-    const createdJobPosting = await createResponse.json()
-
-    setJobPostings((current) => {
-      const withoutDuplicate = current.filter((item) => item.id !== createdJobPosting.id)
-      return [createdJobPosting, ...withoutDuplicate]
-    })
-    setSelectedJobPostingId(createdJobPosting.id)
-    setJobPostingMode('existing')
-    setJobPostingMessage(`Custom job posting "${createdJobPosting.title}" was saved and is now available in Existing Job Posting.`)
-
-    return createdJobPosting
-  }
-
-  async function handleSaveCustomJobPosting() {
-    try {
-      await createCustomJobPosting()
-    } catch (error) {
-      setUploadError(error.message)
-    }
-  }
-
   async function handleSubmit(event) {
     event.preventDefault()
 
     setUploadError('')
-    setJobPostingMessage('')
+
+    if (!authToken) {
+      setUploadError('Please log in before using the screening workflow.')
+      setShowLoginModal(true)
+      return
+    }
 
     const hasUploadedJobDescription = Boolean(jobDescriptionFile)
     const hasPastedJobDescription = Boolean(jobDescriptionText.trim())
@@ -343,51 +199,11 @@ function App() {
       return
     }
 
-    let jobPostingId = selectedJobPostingId
-
-    if (jobPostingMode === 'custom') {
-      if (jobDescriptionInputMode === 'upload' && !hasUploadedJobDescription) {
-        setUploadError('Please upload the custom job description file.')
-        return
-      }
-
-      if (jobDescriptionInputMode === 'paste' && !hasPastedJobDescription) {
-        setUploadError('Please paste the custom job description.')
-        return
-      }
-    } else if (!selectedJobPostingId && !hasUploadedJobDescription && !hasPastedJobDescription) {
-      setUploadError('Please select an existing job posting or provide a job description to screen candidates.')
-      return
-    }
-
     setIsSubmitting(true)
     setUploadMessage('Uploading files and generating ranking report...')
 
     try {
-      if (jobPostingMode === 'custom') {
-        const createdJobPosting = await createCustomJobPosting()
-        if (!createdJobPosting) {
-          throw new Error('Unable to create the custom job posting.')
-        }
-        jobPostingId = createdJobPosting.id
-      } else {
-        const latestJobPostings = await fetchJobPostings()
-        syncJobPostings(latestJobPostings)
-
-        if (jobPostingId) {
-          const validSelectedJobPosting = latestJobPostings.find((jobPosting) => jobPosting.id === jobPostingId)
-          if (!validSelectedJobPosting) {
-            jobPostingId = ''
-            setSelectedJobPostingId('')
-            setJobPostingMessage('Your previous job posting selection is no longer available. The upload will now use the job description you provided unless you select another saved posting.')
-          }
-        }
-      }
-
       const formData = new FormData()
-      if (jobPostingId) {
-        formData.append('jobPostingId', jobPostingId)
-      }
 
       if (jobDescriptionInputMode === 'upload' && jobDescriptionFile) {
         formData.append('jobDescriptionFile', jobDescriptionFile)
@@ -409,6 +225,7 @@ function App() {
 
       const uploadResponse = await fetch(`${API_BASE_URL}/screening/batches`, {
         method: 'POST',
+        headers: getAuthHeaders(),
         body: formData,
       })
 
@@ -430,7 +247,9 @@ function App() {
       const batchResult = await uploadResponse.json()
       setLastBatch(batchResult)
 
-      const reportResponse = await fetch(`${API_BASE_URL}/screening/batches/${batchResult.batchId}/report`)
+      const reportResponse = await fetch(`${API_BASE_URL}/screening/batches/${batchResult.batchId}/report`, {
+        headers: getAuthHeaders(),
+      })
       if (!reportResponse.ok) {
         throw new Error('Files uploaded, but the ranking report could not be retrieved.')
       }
@@ -455,29 +274,53 @@ function App() {
       candidateFilesInputRef.current.value = ''
     }
 
-    setJobPostingMode('existing')
     setJobDescriptionInputMode('upload')
-    setSelectedJobPostingId('')
     setJobDescriptionFile(null)
     setJobDescriptionText('')
-    setCustomJobPosting({
-      title: jobTitleOptions[0],
-      department: departmentOptions[0],
-      location: locationOptions[0],
-      minimumYearsExperience: 0,
-    })
     setCandidateFiles([])
     setIsSubmitting(false)
     setUploadError('')
-    setJobPostingMessage('')
     setLastBatch(null)
     setRankingReport(null)
     setCandidateDisplayCount(6)
-    setUploadMessage('Select a job posting, attach the role description, and upload candidate CVs to generate a ranking report.')
+    setUploadMessage('Add a job description, upload candidate CVs, and generate a ranking report.')
+  }
+
+  async function handleLogout() {
+    const tokenToLogout = authToken
+
+    try {
+      if (tokenToLogout) {
+        await fetch(`${API_BASE_URL}/auth/logout`, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${tokenToLogout}`,
+          },
+        })
+      }
+    } catch {
+      // Ignore logout API failures and still clear the local session.
+    }
+
+    window.localStorage.removeItem(AUTH_STORAGE_KEY)
+    setAuthToken('')
+    setCurrentUser(null)
+    setShowLoginModal(false)
+    setShowSignUpModal(false)
+    setShowGoogleModal(false)
+    setLoginError('')
+    setLoginMessage('')
+    setSignUpError('')
+    setSignUpMessage('')
+    setGoogleError('')
+    setGoogleMessage('')
+    handleResetWorkflow()
+    setUploadMessage('You have been logged out. Please log in again to use the application.')
   }
 
   function handleOpenSignUpModal() {
     setShowLoginModal(false)
+    setShowGoogleModal(false)
     setSignUpError('')
     setSignUpMessage('')
     setShowSignUpModal(true)
@@ -485,9 +328,35 @@ function App() {
 
   function handleOpenLoginModal() {
     setShowSignUpModal(false)
+    setShowGoogleModal(false)
     setLoginError('')
     setLoginMessage('')
     setShowLoginModal(true)
+  }
+
+  function handleOpenGoogleModal() {
+    setShowLoginModal(false)
+    setShowSignUpModal(false)
+    setGoogleError('')
+    setGoogleMessage('')
+    setShowGoogleModal(true)
+  }
+
+  function persistAuth(payload) {
+    const authState = {
+      token: payload.token,
+      fullName: payload.fullName,
+      companyName: payload.companyName,
+      email: payload.email,
+    }
+
+    setAuthToken(payload.token)
+    setCurrentUser({
+      fullName: payload.fullName,
+      companyName: payload.companyName,
+      email: payload.email,
+    })
+    window.localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(authState))
   }
 
   function handleCloseLoginModal() {
@@ -515,11 +384,71 @@ function App() {
     })
   }
 
+  function handleCloseGoogleModal() {
+    setShowGoogleModal(false)
+    setGoogleError('')
+    setGoogleMessage('')
+    setIsSigningInWithGoogle(false)
+    setGoogleForm({
+      fullName: '',
+      companyName: '',
+      email: '',
+    })
+  }
+
   function handleLoginClick() {
     handleOpenLoginModal()
   }
 
-  async function handleSignUpSubmit(event) {
+  async function handleGoogleSignInSubmit(event) {
+    event.preventDefault()
+    setGoogleError('')
+    setGoogleMessage('')
+
+    if (!googleForm.email.trim()) {
+      setGoogleError('Please enter your Gmail address.')
+      return
+    }
+
+    if (!googleForm.email.trim().toLowerCase().endsWith('@gmail.com')) {
+      setGoogleError('Please use a Gmail address ending with @gmail.com.')
+      return
+    }
+
+    setIsSigningInWithGoogle(true)
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/google`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          fullName: googleForm.fullName.trim(),
+          companyName: googleForm.companyName.trim(),
+          email: googleForm.email.trim(),
+        }),
+      })
+
+      const payload = await parseJsonResponse(response)
+      if (!response.ok) {
+        throw new Error(payload?.message || 'Google sign-in could not be completed.')
+      }
+
+      persistAuth(payload)
+      setGoogleMessage(payload.message || 'Signed in with Gmail.')
+      setUploadMessage(`Welcome, ${payload.fullName}. You are now signed in with Gmail.`)
+      setTimeout(() => {
+        handleCloseGoogleModal()
+      }, 1200)
+    } catch (error) {
+      setGoogleError(error.message)
+    } finally {
+      setIsSigningInWithGoogle(false)
+    }
+  }
+
+async function handleSignUpSubmit(event) {
     event.preventDefault()
     setSignUpError('')
     setSignUpMessage('')
@@ -555,20 +484,20 @@ function App() {
         }),
       })
 
-      const payload = await response.json()
+      const payload = await parseJsonResponse(response)
       if (!response.ok) {
         throw new Error(payload?.message || 'Sign up could not be completed.')
       }
 
       setSignUpMessage(payload.message || 'Account created successfully.')
-      setCurrentUser({
-        fullName: payload.fullName,
-        companyName: payload.companyName,
-        email: payload.email,
-      })
-      setUploadMessage(`Welcome, ${payload.fullName}. Your recruiter account has been created.`)
+      setUploadMessage(`Account created for ${payload.fullName}. Please log in before using the application.`)
       setTimeout(() => {
         handleCloseSignUpModal()
+        handleOpenLoginModal()
+        setLoginForm((current) => ({
+          ...current,
+          email: signUpForm.email.trim(),
+        }))
       }, 1200)
     } catch (error) {
       setSignUpError(error.message)
@@ -601,16 +530,12 @@ function App() {
         }),
       })
 
-      const payload = await response.json()
+      const payload = await parseJsonResponse(response)
       if (!response.ok) {
         throw new Error(payload?.message || 'Login could not be completed.')
       }
 
-      setCurrentUser({
-        fullName: payload.fullName,
-        companyName: payload.companyName,
-        email: payload.email,
-      })
+      persistAuth(payload)
       setLoginMessage(payload.message || 'Login successful.')
       setUploadMessage(`Welcome back, ${payload.fullName}. You are now logged in.`)
       setTimeout(() => {
@@ -632,6 +557,7 @@ function App() {
       stats={quickStats}
       onLoginClick={handleLoginClick}
       onSignUpClick={handleOpenSignUpModal}
+      onLogoutClick={handleLogout}
       currentUser={currentUser}
     >
       <section className="hero-panel">
@@ -660,137 +586,28 @@ function App() {
       </section>
 
       <form className="upload-form" onSubmit={handleSubmit}>
+        {!currentUser ? (
+          <section className="auth-gate-card">
+            <p className="card-kicker">Access Required</p>
+            <h3>Sign up or log in before using the recruiter workflow</h3>
+            <p>
+              The backend now protects screening and candidate endpoints. Create a recruiter account or log in to continue.
+            </p>
+            <div className="hero-actions">
+              <button type="button" className="primary-action" onClick={handleOpenSignUpModal}>Create Account</button>
+              <button type="button" className="secondary-action" onClick={handleOpenLoginModal}>Log In</button>
+              <button type="button" className="secondary-action" onClick={handleOpenGoogleModal}>Continue with Gmail</button>
+            </div>
+          </section>
+        ) : null}
+
         <section className="simple-grid">
           <article className="workspace-card upload-card">
             <p className="card-kicker">Step 1</p>
             <h3>Upload Job Description</h3>
             <p>
-              Choose an existing job posting or create a custom one, then upload or paste the job description for screening.
+              Add the role description in the simplest possible way. Choose one input method and provide the job description for screening.
             </p>
-            <div className="mode-toggle">
-              <button
-                type="button"
-                className={`mode-toggle__button${jobPostingMode === 'existing' ? ' is-active' : ''}`}
-                onClick={() => setJobPostingMode('existing')}
-              >
-                Existing Job Posting
-              </button>
-              <button
-                type="button"
-                className={`mode-toggle__button${jobPostingMode === 'custom' ? ' is-active' : ''}`}
-                onClick={() => setJobPostingMode('custom')}
-              >
-                Custom Job Posting
-              </button>
-            </div>
-            {jobPostingMode === 'existing' ? (
-              <>
-                <label className="field-label" htmlFor="job-posting">Job Posting</label>
-                <select
-                  id="job-posting"
-                  className="form-select"
-                  value={selectedJobPostingId}
-                  onChange={(event) => setSelectedJobPostingId(event.target.value)}
-                >
-                  <option value="">Use uploaded job description instead</option>
-                  {jobPostings.map((jobPosting) => (
-                    <option key={jobPosting.id} value={jobPosting.id}>
-                      {jobPosting.title}
-                    </option>
-                  ))}
-                </select>
-                <p className="helper-text">
-                  Selecting a saved job posting is optional. If you leave this blank, the system will analyze the uploaded or pasted job description as the source of truth.
-                </p>
-                {jobPostingMessage ? <p className="helper-text helper-text--success">{jobPostingMessage}</p> : null}
-                {selectedJobPosting ? (
-                  <div className="job-preview">
-                    <div className="job-preview__top">
-                      <strong>{selectedJobPosting.title}</strong>
-                      <span>{selectedJobPosting.minimumYearsExperience}+ years</span>
-                    </div>
-                    <p>{selectedJobPosting.descriptionText}</p>
-                    <div className="job-preview__meta">
-                      <span>{selectedJobPosting.department || 'Engineering'}</span>
-                      <span>{selectedJobPosting.location || 'Remote'}</span>
-                    </div>
-                  </div>
-                ) : null}
-              </>
-            ) : (
-              <div className="custom-job-grid">
-                <div>
-                  <label className="field-label" htmlFor="custom-title">Job Title</label>
-                  <select
-                    id="custom-title"
-                    className="form-select"
-                    value={customJobPosting.title}
-                    onChange={(event) =>
-                      setCustomJobPosting((current) => ({ ...current, title: event.target.value }))
-                    }
-                  >
-                    <option value="">Select job title</option>
-                    {jobTitleOptions.map((title) => (
-                      <option key={title} value={title}>
-                        {title}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="field-label" htmlFor="custom-department">Department</label>
-                  <select
-                    id="custom-department"
-                    className="form-select"
-                    value={customJobPosting.department}
-                    onChange={(event) =>
-                      setCustomJobPosting((current) => ({ ...current, department: event.target.value }))
-                    }
-                  >
-                    <option value="">Select department</option>
-                    {departmentOptions.map((department) => (
-                      <option key={department} value={department}>
-                        {department}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="field-label" htmlFor="custom-location">Location</label>
-                  <select
-                    id="custom-location"
-                    className="form-select"
-                    value={customJobPosting.location}
-                    onChange={(event) =>
-                      setCustomJobPosting((current) => ({ ...current, location: event.target.value }))
-                    }
-                  >
-                    <option value="">Select location</option>
-                    {locationOptions.map((location) => (
-                      <option key={location} value={location}>
-                        {location}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="field-label" htmlFor="custom-years">Minimum Years Experience</label>
-                  <input
-                    id="custom-years"
-                    className="form-input"
-                    type="number"
-                    min="0"
-                    value={customJobPosting.minimumYearsExperience}
-                    onChange={(event) =>
-                      setCustomJobPosting((current) => ({
-                        ...current,
-                        minimumYearsExperience: event.target.value,
-                      }))
-                    }
-                  />
-                </div>
-              </div>
-            )}
             <label className="field-label">Job Description Input</label>
             <div className="mode-toggle mode-toggle--compact">
               <button
@@ -861,22 +678,13 @@ function App() {
                       : 'Paste one job description for screening.'}
               </span>
             </div>
-            {jobPostingMode === 'custom' ? (
-              <button
-                type="button"
-                className="secondary-submit-button"
-                onClick={handleSaveCustomJobPosting}
-              >
-                Save Custom Job Posting
-              </button>
-            ) : null}
           </article>
 
           <article className="workspace-card upload-card">
             <p className="card-kicker">Step 2</p>
             <h3>Upload Multiple CVs</h3>
             <p>
-              Add candidate CVs in one batch so the backend can parse and compare them against the selected job posting.
+              Add candidate CVs in one batch so the backend can parse and compare them against the uploaded or pasted job description.
             </p>
             <label className="field-label" htmlFor="candidate-cv-files">Candidate CV Files</label>
             <input
@@ -915,7 +723,7 @@ function App() {
             <p className="card-kicker">Step 3</p>
             <h3>Run Screening</h3>
             <p>
-              Submit the selected files to the ASP.NET backend. The platform will parse, score, explain, and rank the available candidates.
+              Submit the job description and CV files to the ASP.NET backend. The platform will parse, score, explain, and rank the available candidates.
             </p>
             <ul className="process-list">
               <li>Parse CV content</li>
@@ -1012,7 +820,7 @@ function App() {
         ) : null}
 
         <div className="candidate-results">
-          {rankedCandidates.length > 0 ? rankedCandidates.map((candidate, index) => (
+          {currentUser && rankedCandidates.length > 0 ? rankedCandidates.map((candidate, index) => (
             <article key={candidate.name} className="candidate-card">
               <div className="candidate-card__top">
                 <span className="candidate-rank">#{index + 1}</span>
@@ -1053,7 +861,9 @@ function App() {
             <article className="candidate-card candidate-card--empty">
               <h4>No ranking generated yet</h4>
               <p className="candidate-summary">
-                Upload a job description and at least one CV, then run screening to see ranked candidates here.
+                {currentUser
+                  ? 'Upload a job description and at least one CV, then run screening to see ranked candidates here.'
+                  : 'Log in first, then upload a job description and CVs to generate ranked candidates.'}
               </p>
             </article>
           )}
@@ -1190,6 +1000,9 @@ function App() {
               <button className="submit-button" type="submit" disabled={isSigningUp}>
                 {isSigningUp ? 'Creating Account...' : 'Create Recruiter Account'}
               </button>
+              <button className="secondary-submit-button auth-form__secondary" type="button" onClick={handleOpenGoogleModal}>
+                Continue with Gmail
+              </button>
             </form>
           </section>
         </div>
@@ -1238,6 +1051,69 @@ function App() {
               <button className="submit-button" type="submit" disabled={isLoggingIn}>
                 {isLoggingIn ? 'Logging In...' : 'Log In'}
               </button>
+              <button className="secondary-submit-button auth-form__secondary" type="button" onClick={handleOpenGoogleModal}>
+                Continue with Gmail
+              </button>
+            </form>
+          </section>
+        </div>
+      ) : null}
+
+      {showGoogleModal ? (
+        <div className="auth-modal-backdrop" role="presentation" onClick={handleCloseGoogleModal}>
+          <section
+            className="auth-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="google-title"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="auth-modal__header">
+              <div>
+                <p className="card-kicker">Quick Access</p>
+                <h3 id="google-title">Continue With Gmail</h3>
+              </div>
+              <button type="button" className="auth-modal__close" onClick={handleCloseGoogleModal}>
+                Close
+              </button>
+            </div>
+            <form className="auth-form" onSubmit={handleGoogleSignInSubmit}>
+              <p className="auth-form__helper">
+                Use your Gmail address to create or access a recruiter account without setting a password.
+              </p>
+
+              <label className="field-label" htmlFor="google-full-name">Full Name</label>
+              <input
+                id="google-full-name"
+                className="form-input"
+                value={googleForm.fullName}
+                onChange={(event) => setGoogleForm((current) => ({ ...current, fullName: event.target.value }))}
+              />
+
+              <label className="field-label" htmlFor="google-company">Company</label>
+              <input
+                id="google-company"
+                className="form-input"
+                value={googleForm.companyName}
+                onChange={(event) => setGoogleForm((current) => ({ ...current, companyName: event.target.value }))}
+              />
+
+              <label className="field-label" htmlFor="google-email">Gmail Address</label>
+              <input
+                id="google-email"
+                className="form-input"
+                type="email"
+                placeholder="name@gmail.com"
+                value={googleForm.email}
+                onChange={(event) => setGoogleForm((current) => ({ ...current, email: event.target.value }))}
+              />
+
+              {googleMessage ? <p className="auth-form__success">{googleMessage}</p> : null}
+              {googleError ? <p className="auth-form__error">{googleError}</p> : null}
+
+              <button className="submit-button" type="submit" disabled={isSigningInWithGoogle}>
+                {isSigningInWithGoogle ? 'Signing In...' : 'Continue With Gmail'}
+              </button>
             </form>
           </section>
         </div>
@@ -1252,6 +1128,19 @@ function toTitleCase(value) {
     .filter(Boolean)
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
     .join(' ')
+}
+
+async function parseJsonResponse(response) {
+  const responseText = await response.text()
+  if (!responseText) {
+    return {}
+  }
+
+  try {
+    return JSON.parse(responseText)
+  } catch {
+    return { message: responseText }
+  }
 }
 
 export default App

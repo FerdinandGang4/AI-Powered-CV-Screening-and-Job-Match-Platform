@@ -9,6 +9,7 @@ function AppLayout({
   stats,
   onLoginClick,
   onSignUpClick,
+  onLogoutClick,
   currentUser,
   children,
 }) {
@@ -22,6 +23,7 @@ function AppLayout({
         stats={stats}
         onLoginClick={onLoginClick}
         onSignUpClick={onSignUpClick}
+        onLogoutClick={onLogoutClick}
         currentUser={currentUser}
       />
       <main className="app-content">{children}</main>

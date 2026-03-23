@@ -136,6 +136,15 @@
   margin: 0;
 }
 
+.auth-gate-card {
+  margin-bottom: 1rem;
+  padding: 1.4rem;
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  background: rgba(255, 252, 245, 0.92);
+  box-shadow: 0 20px 50px rgba(26, 41, 35, 0.08);
+}
+
 .workspace-card {
   padding: 1.4rem;
 }
@@ -767,6 +776,12 @@
   margin-top: 1rem;
 }
 
+.auth-form__helper {
+  margin: 0 0 0.9rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
 .auth-form__success {
   margin: 0.9rem 0 0;
   color: #0f766e;
@@ -777,6 +792,11 @@
   margin: 0.9rem 0 0;
   color: #b42318;
   font-weight: 600;
+}
+
+.auth-form__secondary {
+  margin-top: 0.75rem;
+  width: 100%;
 }
 
 @media (max-width: 1120px) {

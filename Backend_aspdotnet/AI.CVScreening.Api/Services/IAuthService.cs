@@ -6,4 +6,6 @@ public interface IAuthService
 {
     AuthResponseDto SignUp(SignUpRequest request);
     AuthResponseDto Login(LoginRequest request);
+    AuthResponseDto SignInWithGoogle(GoogleSignInRequest request);
+    void Logout(string token);
 }

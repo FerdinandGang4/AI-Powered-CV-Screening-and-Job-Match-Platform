@@ -10,6 +10,7 @@ public sealed class AppMemoryStore
     public List<JobPostingDetailDto> JobPostings { get; } = [];
     public List<CandidateProfileDto> Candidates { get; } = [];
     public List<RecruiterAccountDto> RecruiterAccounts { get; } = [];
+    public Dictionary<string, Guid> RecruiterSessions { get; } = new(StringComparer.Ordinal);
     public Dictionary<Guid, RankingReportDto> ReportsByBatchId { get; } = [];
     public Dictionary<Guid, Guid> BatchToJobPostingMap { get; } = [];
     public Dictionary<Guid, RankingReportDto> LatestReportsByJobPostingId { get; } = [];

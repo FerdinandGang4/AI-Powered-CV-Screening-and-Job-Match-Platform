@@ -6,6 +6,7 @@ function TopNavbar({
   stats,
   onLoginClick,
   onSignUpClick,
+  onLogoutClick,
   currentUser,
 }) {
   return (
@@ -52,10 +53,15 @@ function TopNavbar({
         </div>
         <div className="top-navbar__auth">
           {currentUser ? (
-            <div className="top-navbar__user-chip">
-              <strong>{currentUser.fullName}</strong>
-              <span>{currentUser.companyName}</span>
-            </div>
+            <>
+              <div className="top-navbar__user-chip">
+                <strong>{currentUser.fullName}</strong>
+                <span>{currentUser.companyName}</span>
+              </div>
+              <button type="button" className="top-navbar__auth-button top-navbar__auth-button--ghost" onClick={onLogoutClick}>
+                Logout
+              </button>
+            </>
           ) : (
             <>
               <button type="button" className="top-navbar__auth-button top-navbar__auth-button--ghost" onClick={onLoginClick}>
