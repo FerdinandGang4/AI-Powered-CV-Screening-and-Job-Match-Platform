@@ -237,35 +237,29 @@ public sealed class InMemoryScreeningService(
         string jobDescriptionText,
         CancellationToken cancellationToken)
     {
-        if (openAiRankingService.IsConfigured)
+        if (!openAiRankingService.IsConfigured)
         {
-            try
-            {
-                var aiRankedCandidates = await openAiRankingService.RankCandidatesAsync(
-                    jobPosting,
-                    jobDescriptionText,
-                    candidates.Select(candidate => candidate.RankingInput).ToArray(),
-                    cancellationToken);
-
-                var aiReport = BuildAiRankingReport(jobPosting, candidates, aiRankedCandidates);
-                aiReport.AiStatus = "ai";
-                aiReport.AiStatusMessage = "Ranked with OpenAI using the uploaded CV text and job description.";
-                return aiReport;
-            }
-            catch (Exception exception)
-            {
-                logger.LogWarning(exception, "AI ranking failed. Falling back to local heuristic scoring.");
-                var fallbackOnError = BuildHeuristicRankingReport(jobPosting, candidates, jobDescriptionText);
-                fallbackOnError.AiStatus = "fallback_error";
-                fallbackOnError.AiStatusMessage = "OpenAI ranking was unavailable for this run, so the local scoring engine was used instead.";
-                return fallbackOnError;
-            }
+            throw new InvalidOperationException("OpenAI ranking is required, but the backend is not configured with a valid API key.");
         }
 
-        var fallbackReport = BuildHeuristicRankingReport(jobPosting, candidates, jobDescriptionText);
-        fallbackReport.AiStatus = "fallback_unconfigured";
-        fallbackReport.AiStatusMessage = "OpenAI ranking is not configured, so the local scoring engine was used.";
-        return fallbackReport;
+        try
+        {
+            var aiRankedCandidates = await openAiRankingService.RankCandidatesAsync(
+                jobPosting,
+                jobDescriptionText,
+                candidates.Select(candidate => candidate.RankingInput).ToArray(),
+                cancellationToken);
+
+            var aiReport = BuildAiRankingReport(jobPosting, candidates, aiRankedCandidates);
+            aiReport.AiStatus = "ai";
+            aiReport.AiStatusMessage = "Ranked with OpenAI using the uploaded CV text and job description.";
+            return aiReport;
+        }
+        catch (Exception exception)
+        {
+            logger.LogWarning(exception, "AI ranking failed and fallback scoring is disabled.");
+            throw new InvalidOperationException("OpenAI ranking failed for this screening request. Check the API key, model access, and network connectivity, then try again.");
+        }
     }
 
     private static RankingReportDto BuildHeuristicRankingReport(
