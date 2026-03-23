@@ -118,6 +118,23 @@
   padding-top: 0.15rem;
 }
 
+.top-navbar__contact-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem 0.8rem;
+  margin-left: 0.35rem;
+}
+
+.top-navbar__contact-links a {
+  color: rgba(228, 238, 245, 0.86);
+  font-size: 0.78rem;
+  text-decoration: none;
+}
+
+.top-navbar__contact-links a:hover {
+  text-decoration: underline;
+}
+
 .top-navbar__nav-item {
   border: 1px solid rgba(214, 226, 235, 0.16);
   background: transparent;
@@ -210,6 +227,10 @@
   .top-navbar__nav {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .top-navbar__contact-links {
+    margin-left: 0;
   }
 
   .top-navbar__auth {

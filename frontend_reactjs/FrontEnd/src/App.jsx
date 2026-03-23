@@ -9,8 +9,8 @@ const navigationItems = [
 
 const quickStats = [
   { value: '1', label: 'Job description' },
-  { value: '4', label: 'CV files uploaded' },
-  { value: '3', label: 'Ranked candidates' },
+  { value: '8', label: 'CV files uploaded' },
+  { value: 'Top 5', label: 'Shortlisted results' },
 ]
 
 const rankedCandidates = [
@@ -18,7 +18,7 @@ const rankedCandidates = [
     name: 'Amina Hassan',
     score: '91%',
     summary: 'Strong fit for ASP.NET Core, C#, SQL, and backend API development.',
-    gaps: 'Missing only minor Azure deployment depth.',
+    gaps: 'Minor Azure deployment depth gap.',
   },
   {
     name: 'David Mensah',
@@ -31,6 +31,18 @@ const rankedCandidates = [
     score: '68%',
     summary: 'Relevant project work and solid problem-solving profile.',
     gaps: 'Missing some required framework skills and less direct role alignment.',
+  },
+  {
+    name: 'Mark Otieno',
+    score: '64%',
+    summary: 'Useful software engineering foundation and some API exposure.',
+    gaps: 'Gap in ASP.NET Core depth and fewer relevant backend projects.',
+  },
+  {
+    name: 'Lilian Boateng',
+    score: '58%',
+    summary: 'Shows transferable skills and a promising technical background.',
+    gaps: 'Needs more direct C# backend experience and stronger role alignment.',
   },
 ]
 
@@ -110,10 +122,10 @@ function App() {
         <div className="results-header">
           <div>
             <p className="card-kicker">Step 4</p>
-            <h3>Ranked Candidate Results</h3>
+            <h3>Top 5 Ranked Candidates</h3>
           </div>
           <p className="results-copy">
-            The recruiter sees a ranked list with match score, reason for ranking, and missing skills or experience.
+            The recruiter can quickly review the first five candidates by match percentage, ranking position, and key gaps.
           </p>
         </div>
 
@@ -122,10 +134,13 @@ function App() {
             <article key={candidate.name} className="candidate-card">
               <div className="candidate-card__top">
                 <span className="candidate-rank">#{index + 1}</span>
-                <span className="candidate-score">{candidate.score}</span>
+                <span className="candidate-score">{candidate.score} Match</span>
               </div>
               <h4>{candidate.name}</h4>
               <p className="candidate-summary">{candidate.summary}</p>
+              <div className="candidate-progress" aria-hidden="true">
+                <div className="candidate-progress__fill" style={{ width: candidate.score }} />
+              </div>
               <p className="candidate-gap">
                 <strong>Gap:</strong> {candidate.gaps}
               </p>
@@ -150,6 +165,51 @@ function App() {
           </p>
         </article>
       </section>
+
+      <section className="creator-section">
+        <article className="creator-card">
+          <div className="creator-card__header">
+            <div className="creator-card__mark" aria-hidden="true">GD</div>
+            <div>
+              <p className="card-kicker">Developed By</p>
+              <h3>Gang Ferdinand Dinga</h3>
+              <p className="creator-role">Software Engineer | ASP.NET | React | Scalable Systems</p>
+            </div>
+          </div>
+          <p className="creator-description">
+            Focused on building practical software solutions with ASP.NET, React, and modular application architecture for real-world hiring workflows.
+          </p>
+          <div className="creator-links">
+            <a href="mailto:ferdinandgang4@gmail.com">Email</a>
+            <a href="tel:+16412332357">Phone</a>
+            <a href="https://www.linkedin.com/in/ferdinand-dinga-gang-91a912185/" target="_blank" rel="noreferrer">LinkedIn Profile</a>
+            <a href="https://github.com/FerdinandGang4/" target="_blank" rel="noreferrer">GitHub Portfolio</a>
+          </div>
+          <div className="creator-meta">
+            <span>ferdinandgang4@gmail.com</span>
+            <span>+1 641 233 2357</span>
+          </div>
+        </article>
+      </section>
+
+      <footer className="page-footer">
+        <div>
+          <p className="page-footer__brand">AI-Powered CV Screening Platform</p>
+          <p className="page-footer__credit">Powered by Engineer Gang Ferdinand Dinga</p>
+        </div>
+        <div className="page-footer__details">
+          <p className="page-footer__copy">
+            Upload job descriptions, screen multiple CVs, rank candidates, and highlight matching gaps in one streamlined workflow.
+          </p>
+          <div className="page-footer__contact">
+            <span>Gang Ferdinand Dinga</span>
+            <a href="mailto:ferdinandgang4@gmail.com">ferdinandgang4@gmail.com</a>
+            <a href="tel:+16412332357">+1 641 233 2357</a>
+            <a href="https://www.linkedin.com/in/ferdinand-dinga-gang-91a912185/" target="_blank" rel="noreferrer">LinkedIn</a>
+            <a href="https://github.com/FerdinandGang4/" target="_blank" rel="noreferrer">GitHub</a>
+          </div>
+        </div>
+      </footer>
     </AppLayout>
   )
 }

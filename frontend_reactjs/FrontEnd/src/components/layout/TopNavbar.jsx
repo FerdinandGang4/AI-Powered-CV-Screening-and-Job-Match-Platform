@@ -36,6 +36,11 @@ function TopNavbar({ brand, heading, subheading, navigationItems, stats }) {
             {item.label}
           </button>
         ))}
+        <div className="top-navbar__contact-links">
+          <a href="mailto:ferdinandgang4@gmail.com">Email</a>
+          <a href="https://www.linkedin.com/in/ferdinand-dinga-gang-91a912185/" target="_blank" rel="noreferrer">LinkedIn</a>
+          <a href="https://github.com/FerdinandGang4/" target="_blank" rel="noreferrer">GitHub</a>
+        </div>
         <div className="top-navbar__auth">
           <button type="button" className="top-navbar__auth-button top-navbar__auth-button--ghost">
             Login
