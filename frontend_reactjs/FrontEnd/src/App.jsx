@@ -1,120 +1,83 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
+import AppLayout from './components/layout/AppLayout'
 import './App.css'
 
+const navigationItems = [
+  { label: 'Dashboard', description: 'Overview of hiring activity', isActive: true },
+  { label: 'Job Posts', description: 'Manage role requirements' },
+  { label: 'CV Screening', description: 'Upload and parse candidate files' },
+  { label: 'Rankings', description: 'Compare candidate evaluation results' },
+  { label: 'Reports', description: 'Review summaries and insights' },
+]
+
+const quickStats = [
+  { value: '24', label: 'CVs screened this week' },
+  { value: '08', label: 'Active job postings' },
+  { value: '91%', label: 'Processing success rate' },
+]
+
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
+    <AppLayout
+      brand="CV Match Platform"
+      heading="AI-Powered Recruitment Workspace"
+      subheading="Screen candidates faster, compare rankings clearly, and keep recruiters aligned from upload to shortlist."
+      navigationItems={navigationItems}
+      stats={quickStats}
+    >
+      <section className="hero-panel">
+        <div className="hero-copy">
+          <p className="eyebrow">Recruiter Dashboard</p>
+          <h2>Backend and frontend are now separated cleanly for a scalable hiring workflow.</h2>
           <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
+            This layout is ready for the next components: job posting forms, CV upload flows,
+            candidate ranking tables, and detailed match explanations from the ASP.NET API.
           </p>
+          <div className="hero-actions">
+            <button type="button" className="primary-action">Create Job Posting</button>
+            <button type="button" className="secondary-action">Open Screening Queue</button>
+          </div>
         </div>
-        <button
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
 
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
+        <div className="hero-metrics" aria-label="Platform summary">
+          <article className="metric-card emphasis">
+            <span className="metric-label">Top insight</span>
+            <strong className="metric-value">2 strong candidates</strong>
+            <p className="metric-note">Latest ranking run found two applicants above the shortlist threshold.</p>
+          </article>
+          <article className="metric-card">
+            <span className="metric-label">Next frontend step</span>
+            <strong className="metric-value">Upload flow</strong>
+            <p className="metric-note">Wire the CV upload form to `/api/screening/batches`.</p>
+          </article>
         </div>
       </section>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+      <section className="workspace-grid">
+        <article className="workspace-card">
+          <p className="card-kicker">Ready Section</p>
+          <h3>Top Navigation</h3>
+          <p>
+            Includes page identity, status information, and recruiter-facing actions for the dashboard shell.
+          </p>
+        </article>
+
+        <article className="workspace-card">
+          <p className="card-kicker">Ready Section</p>
+          <h3>Sidebar Navigation</h3>
+          <p>
+            Gives the app a stable dashboard structure so the rest of the pages can slot in without redesigning the frame.
+          </p>
+        </article>
+
+        <article className="workspace-card">
+          <p className="card-kicker">Next Section</p>
+          <h3>Job And Upload Modules</h3>
+          <p>
+            The next implementation step is adding the upload and job requirement components inside this main content area.
+          </p>
+        </article>
+      </section>
+    </AppLayout>
   )
 }
 

@@ -1,0 +1,216 @@
+.app-shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 292px minmax(0, 1fr);
+  padding: 1.15rem;
+  gap: 1rem;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.4rem;
+  border-radius: 30px;
+  background:
+    radial-gradient(circle at top left, rgba(49, 103, 87, 0.18), transparent 26%),
+    linear-gradient(180deg, rgba(255, 251, 244, 0.96), rgba(240, 235, 224, 0.96));
+  border: 1px solid rgba(39, 71, 58, 0.1);
+  box-shadow: 0 20px 50px rgba(26, 41, 35, 0.08);
+}
+
+.sidebar__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.sidebar__mark {
+  width: 52px;
+  height: 52px;
+  border-radius: 18px;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  color: #f9f6eb;
+  background: linear-gradient(135deg, #1e5f4c, #275f86);
+}
+
+.sidebar__eyebrow {
+  margin: 0 0 0.25rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--accent-strong);
+}
+
+.sidebar__brand h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.sidebar__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.sidebar__item {
+  width: 100%;
+  text-align: left;
+  border: 1px solid transparent;
+  background: rgba(255, 255, 255, 0.56);
+  border-radius: 18px;
+  padding: 0.95rem 1rem;
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.sidebar__item:hover {
+  transform: translateX(2px);
+  border-color: rgba(39, 95, 134, 0.16);
+}
+
+.sidebar__item.is-active {
+  background: linear-gradient(135deg, rgba(39, 95, 134, 0.12), rgba(30, 95, 76, 0.14));
+  border-color: rgba(39, 95, 134, 0.2);
+}
+
+.sidebar__item-label,
+.sidebar__item-description {
+  display: block;
+}
+
+.sidebar__item-label {
+  font-weight: 700;
+}
+
+.sidebar__item-description {
+  margin-top: 0.22rem;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.sidebar__footer {
+  margin-top: auto;
+  padding: 1rem;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(39, 71, 58, 0.1);
+}
+
+.sidebar__footer-title {
+  margin: 0;
+  font-weight: 800;
+}
+
+.sidebar__footer-copy {
+  margin: 0.45rem 0 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.app-main {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.top-navbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.2rem;
+  padding: 1.4rem 1.5rem;
+  border-radius: 30px;
+  background: rgba(255, 252, 247, 0.88);
+  border: 1px solid rgba(39, 71, 58, 0.1);
+  box-shadow: 0 18px 44px rgba(26, 41, 35, 0.07);
+}
+
+.top-navbar__label {
+  margin: 0 0 0.35rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.top-navbar h1 {
+  margin: 0;
+  font-size: clamp(1.7rem, 3vw, 2.75rem);
+  line-height: 1.05;
+}
+
+.top-navbar__subheading {
+  margin: 0.55rem 0 0;
+  max-width: 66ch;
+  color: var(--muted);
+}
+
+.top-navbar__stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(120px, 1fr));
+  gap: 0.75rem;
+  min-width: min(100%, 440px);
+}
+
+.top-navbar__stat {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0.95rem 1rem;
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(240, 246, 242, 0.92), rgba(255, 255, 255, 0.94));
+  border: 1px solid rgba(39, 71, 58, 0.08);
+}
+
+.top-navbar__stat strong {
+  font-size: 1.35rem;
+}
+
+.top-navbar__stat span {
+  margin-top: 0.25rem;
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.app-content {
+  min-width: 0;
+}
+
+@media (max-width: 1120px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    gap: 1rem;
+  }
+
+  .top-navbar {
+    flex-direction: column;
+  }
+
+  .top-navbar__stats {
+    min-width: 0;
+  }
+}
+
+@media (max-width: 720px) {
+  .app-shell {
+    padding: 0.75rem;
+  }
+
+  .sidebar,
+  .top-navbar {
+    padding: 1rem;
+    border-radius: 24px;
+  }
+
+  .top-navbar__stats {
+    grid-template-columns: 1fr;
+  }
+}
