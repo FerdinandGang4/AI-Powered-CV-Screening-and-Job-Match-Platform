@@ -9,6 +9,22 @@ function TopNavbar({
   onLogoutClick,
   currentUser,
 }) {
+  function scrollToSection(targetId) {
+    if (!targetId) {
+      return
+    }
+
+    const section = document.getElementById(targetId)
+    if (!section) {
+      return
+    }
+
+    section.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    })
+  }
+
   return (
     <header className="top-navbar">
       <div className="top-navbar__main">
@@ -42,14 +58,15 @@ function TopNavbar({
             key={item.label}
             type="button"
             className={`top-navbar__nav-item${item.isActive ? ' is-active' : ''}`}
+            onClick={() => scrollToSection(item.targetId)}
           >
             {item.label}
           </button>
         ))}
         <div className="top-navbar__contact-links">
-          <a href="mailto:ferdinandgang4@gmail.com">Email</a>
-          <a href="https://www.linkedin.com/in/ferdinand-dinga-gang-91a912185/" target="_blank" rel="noreferrer">LinkedIn</a>
-          <a href="https://github.com/FerdinandGang4/" target="_blank" rel="noreferrer">GitHub</a>
+          <a href="mailto:ferdinandgang4@gmail.com" aria-label="Send email to Gang Ferdinand Dinga">Email</a>
+          <a href="https://www.linkedin.com/in/ferdinand-dinga-gang-91a912185/" target="_blank" rel="noreferrer" aria-label="Open LinkedIn profile">LinkedIn</a>
+          <a href="https://github.com/FerdinandGang4/" target="_blank" rel="noreferrer" aria-label="Open GitHub profile">GitHub</a>
         </div>
         <div className="top-navbar__auth">
           {currentUser ? (

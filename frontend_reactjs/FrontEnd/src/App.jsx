@@ -3,9 +3,9 @@ import AppLayout from './components/layout/AppLayout'
 import './App.css'
 
 const navigationItems = [
-  { label: 'Upload', description: 'Job description and CV files', isActive: true },
-  { label: 'Analysis', description: 'Parsing and evaluation flow' },
-  { label: 'Ranking', description: 'Results and insights' },
+  { label: 'Upload', description: 'Job description and CV files', isActive: true, targetId: 'upload-workflow' },
+  { label: 'Analysis', description: 'Parsing and evaluation flow', targetId: 'analysis-workflow' },
+  { label: 'Ranking', description: 'Results and insights', targetId: 'ranking-results' },
 ]
 
 const API_BASE_URL = 'http://localhost:5282/api'
@@ -20,6 +20,8 @@ function App() {
   const [jobDescriptionText, setJobDescriptionText] = useState('')
   const [candidateFiles, setCandidateFiles] = useState([])
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [screeningProgress, setScreeningProgress] = useState(0)
+  const [screeningStage, setScreeningStage] = useState('Ready to screen')
   const [uploadMessage, setUploadMessage] = useState('Add a job description, upload candidate CVs, and generate a ranking report.')
   const [uploadError, setUploadError] = useState('')
   const [lastBatch, setLastBatch] = useState(null)
@@ -76,6 +78,38 @@ function App() {
       window.localStorage.removeItem(AUTH_STORAGE_KEY)
     }
   }, [])
+
+  useEffect(() => {
+    if (!isSubmitting) {
+      return undefined
+    }
+
+    const stages = [
+      { progress: 12, label: 'Uploading files to the backend...' },
+      { progress: 32, label: 'Parsing the job description...' },
+      { progress: 56, label: 'Extracting candidate CV content...' },
+      { progress: 78, label: 'Scoring candidates against the role...' },
+      { progress: 92, label: 'Generating the final ranking...' },
+    ]
+
+    let stageIndex = 0
+    setScreeningProgress(stages[0].progress)
+    setScreeningStage(stages[0].label)
+
+    const intervalId = window.setInterval(() => {
+      stageIndex += 1
+
+      if (stageIndex >= stages.length) {
+        window.clearInterval(intervalId)
+        return
+      }
+
+      setScreeningProgress(stages[stageIndex].progress)
+      setScreeningStage(stages[stageIndex].label)
+    }, 900)
+
+    return () => window.clearInterval(intervalId)
+  }, [isSubmitting])
 
   function getAuthHeaders() {
     return authToken
@@ -200,6 +234,8 @@ function App() {
     }
 
     setIsSubmitting(true)
+    setScreeningProgress(10)
+    setScreeningStage('Uploading files to the backend...')
     setUploadMessage('Uploading files and generating ranking report...')
 
     try {
@@ -256,8 +292,12 @@ function App() {
 
       const report = await reportResponse.json()
       setRankingReport(report)
+      setScreeningProgress(100)
+      setScreeningStage('Ranking complete')
       setUploadMessage(`Upload successful. Ranking report generated for ${report.totalCandidates} evaluated candidate(s).`)
     } catch (error) {
+      setScreeningProgress(0)
+      setScreeningStage('Screening could not be completed')
       setUploadError(error.message)
       setUploadMessage('Upload could not be completed.')
     } finally {
@@ -279,6 +319,8 @@ function App() {
     setJobDescriptionText('')
     setCandidateFiles([])
     setIsSubmitting(false)
+    setScreeningProgress(0)
+    setScreeningStage('Ready to screen')
     setUploadError('')
     setLastBatch(null)
     setRankingReport(null)
@@ -585,7 +627,7 @@ async function handleSignUpSubmit(event) {
         </div>
       </section>
 
-      <form className="upload-form" onSubmit={handleSubmit}>
+      <form className="upload-form" id="upload-workflow" onSubmit={handleSubmit}>
         {!currentUser ? (
           <section className="auth-gate-card">
             <p className="card-kicker">Access Required</p>
@@ -719,7 +761,7 @@ async function handleSignUpSubmit(event) {
             <p className="helper-text">You can select more files again later and they will be added to the list.</p>
           </article>
 
-          <article className="workspace-card process-card">
+          <article className="workspace-card process-card" id="analysis-workflow">
             <p className="card-kicker">Step 3</p>
             <h3>Run Screening</h3>
             <p>
@@ -742,6 +784,21 @@ async function handleSignUpSubmit(event) {
             >
               Reset App
             </button>
+            <div className="screening-progress" aria-live="polite">
+              <div className="screening-progress__header">
+                <span>Ranking Progress</span>
+                <strong>{isSubmitting || screeningProgress > 0 ? `${screeningProgress}%` : '0%'}</strong>
+              </div>
+              <div className="screening-progress__track" aria-hidden="true">
+                <div
+                  className={`screening-progress__fill${isSubmitting ? ' is-active' : ''}`}
+                  style={{ width: `${screeningProgress}%` }}
+                />
+              </div>
+              <p className="screening-progress__label">
+                {isSubmitting ? screeningStage : rankingReport ? 'Ranking complete' : 'Ready to start screening'}
+              </p>
+            </div>
             <p className="upload-status">{uploadMessage}</p>
             {uploadError ? <p className="upload-error">{uploadError}</p> : null}
             {lastBatch ? (
@@ -753,7 +810,7 @@ async function handleSignUpSubmit(event) {
         </section>
       </form>
 
-      <section className="results-section">
+      <section className="results-section" id="ranking-results">
         <div className="results-header">
           <div>
             <p className="card-kicker">Step 4</p>

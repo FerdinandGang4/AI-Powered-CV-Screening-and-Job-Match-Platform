@@ -126,13 +126,26 @@
 }
 
 .top-navbar__contact-links a {
-  color: rgba(228, 238, 245, 0.86);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  padding: 0.42rem 0.72rem;
+  border-radius: 999px;
+  border: 1px solid rgba(214, 226, 235, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(228, 238, 245, 0.9);
   font-size: 0.78rem;
+  font-weight: 600;
   text-decoration: none;
+  transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
 }
 
 .top-navbar__contact-links a:hover {
-  text-decoration: underline;
+  transform: translateY(-1px);
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(214, 226, 235, 0.22);
 }
 
 .top-navbar__nav-item {
