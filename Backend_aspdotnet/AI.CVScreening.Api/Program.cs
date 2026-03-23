@@ -30,6 +30,8 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddSingleton<IJobPostingService, InMemoryJobPostingService>();
+builder.Services.AddSingleton<ICandidateService, InMemoryCandidateService>();
+builder.Services.AddSingleton<IScreeningService, InMemoryScreeningService>();
 
 var app = builder.Build();
 

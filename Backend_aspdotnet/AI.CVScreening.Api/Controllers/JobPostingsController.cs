@@ -13,7 +13,7 @@ public sealed class JobPostingsController(IJobPostingService jobPostingService) 
     }
 
     [HttpGet("{id:guid}")]
-    public ActionResult<JobPostingSummaryDto> GetById(Guid id)
+    public ActionResult<JobPostingDetailDto> GetById(Guid id)
     {
         var jobPosting = jobPostingService.GetById(id);
         if (jobPosting is null)
@@ -25,7 +25,7 @@ public sealed class JobPostingsController(IJobPostingService jobPostingService) 
     }
 
     [HttpPost]
-    public ActionResult<JobPostingSummaryDto> Create(CreateJobPostingRequest request)
+    public ActionResult<JobPostingDetailDto> Create(CreateJobPostingRequest request)
     {
         var createdJobPosting = jobPostingService.Create(request);
         return CreatedAtAction(nameof(GetById), new { id = createdJobPosting.Id }, createdJobPosting);
