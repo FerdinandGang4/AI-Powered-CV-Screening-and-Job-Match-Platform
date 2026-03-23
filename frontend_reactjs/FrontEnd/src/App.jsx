@@ -45,14 +45,23 @@ const fallbackRankedCandidates = [
 
 function App() {
   const [jobPostings, setJobPostings] = useState([])
+  const [jobPostingMode, setJobPostingMode] = useState('existing')
   const [selectedJobPostingId, setSelectedJobPostingId] = useState('')
   const [jobDescriptionFile, setJobDescriptionFile] = useState(null)
+  const [jobDescriptionText, setJobDescriptionText] = useState('')
+  const [customJobPosting, setCustomJobPosting] = useState({
+    title: '',
+    department: '',
+    location: '',
+    minimumYearsExperience: 0,
+  })
   const [candidateFiles, setCandidateFiles] = useState([])
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [uploadMessage, setUploadMessage] = useState('Select a job posting, attach the role description, and upload candidate CVs to generate a ranking report.')
   const [uploadError, setUploadError] = useState('')
   const [lastBatch, setLastBatch] = useState(null)
   const [rankingReport, setRankingReport] = useState(null)
+  const [candidateDisplayCount, setCandidateDisplayCount] = useState(5)
 
   useEffect(() => {
     let ignore = false
@@ -86,17 +95,17 @@ function App() {
   }, [])
 
   const quickStats = useMemo(() => [
-    { value: selectedJobPostingId ? '1' : '0', label: 'Job description' },
+    { value: selectedJobPostingId || jobPostingMode === 'custom' ? '1' : '0', label: 'Job description' },
     { value: `${candidateFiles.length}`, label: 'CV files uploaded' },
-    { value: rankingReport ? `Top ${Math.min(rankingReport.rankedCandidates.length, 5)}` : 'Top 5', label: 'Shortlisted results' },
-  ], [candidateFiles.length, rankingReport, selectedJobPostingId])
+    { value: `Top ${candidateDisplayCount}`, label: 'Shortlisted results' },
+  ], [candidateDisplayCount, candidateFiles.length, jobPostingMode, selectedJobPostingId])
 
   const rankedCandidates = useMemo(() => {
     if (!rankingReport?.rankedCandidates?.length) {
-      return fallbackRankedCandidates
+      return fallbackRankedCandidates.slice(0, candidateDisplayCount)
     }
 
-    return rankingReport.rankedCandidates.slice(0, 5).map((candidate) => {
+    return rankingReport.rankedCandidates.slice(0, candidateDisplayCount).map((candidate) => {
       const percentage = `${Math.round(candidate.overallScore)}%`
       const explanation = candidate.explanation?.summary
         ?? `${candidate.candidate.fullName} was evaluated against the selected role.`
@@ -111,7 +120,11 @@ function App() {
         gaps: gapSummary,
       }
     })
-  }, [rankingReport])
+  }, [candidateDisplayCount, rankingReport])
+
+  const maxDisplayCount = rankingReport?.rankedCandidates?.length
+    ? Math.min(6, Math.max(1, rankingReport.rankedCandidates.length))
+    : Math.min(6, fallbackRankedCandidates.length)
 
   function handleCandidateFilesChange(event) {
     const newFiles = Array.from(event.target.files ?? [])
@@ -147,13 +160,8 @@ function App() {
 
     setUploadError('')
 
-    if (!selectedJobPostingId) {
-      setUploadError('Please select a job posting before uploading documents.')
-      return
-    }
-
-    if (!jobDescriptionFile) {
-      setUploadError('Please attach a job description file.')
+    if (!jobDescriptionFile && !jobDescriptionText.trim()) {
+      setUploadError('Please attach a job description file or paste the job description text.')
       return
     }
 
@@ -162,24 +170,75 @@ function App() {
       return
     }
 
-    const formData = new FormData()
-    formData.append('jobPostingId', selectedJobPostingId)
-    formData.append('jobDescriptionFile', jobDescriptionFile)
+    let jobPostingId = selectedJobPostingId
 
-    candidateFiles.forEach((file, index) => {
-      const baseName = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]+/g, ' ').trim()
-      const candidateName = baseName.length > 0 ? toTitleCase(baseName) : `Candidate ${index + 1}`
-      const candidateEmail = `candidate${index + 1}@example.com`
+    if (jobPostingMode === 'custom') {
+      if (!customJobPosting.title.trim()) {
+        setUploadError('Please provide a custom job posting title.')
+        return
+      }
 
-      formData.append(`candidateCvs[${index}].candidateName`, candidateName)
-      formData.append(`candidateCvs[${index}].candidateEmail`, candidateEmail)
-      formData.append(`candidateCvs[${index}].cvFile`, file)
-    })
+      if (!jobDescriptionText.trim() && !jobDescriptionFile) {
+        setUploadError('Please paste the custom job description or upload a job description file.')
+        return
+      }
+    } else if (!selectedJobPostingId) {
+      setUploadError('Please select a job posting before uploading documents.')
+      return
+    }
 
     setIsSubmitting(true)
     setUploadMessage('Uploading files and generating ranking report...')
 
     try {
+      if (jobPostingMode === 'custom') {
+        const createResponse = await fetch(`${API_BASE_URL}/jobpostings`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            title: customJobPosting.title.trim(),
+            department: customJobPosting.department.trim(),
+            descriptionText: jobDescriptionText.trim() || 'Uploaded job description document',
+            minimumYearsExperience: Number(customJobPosting.minimumYearsExperience) || 0,
+            location: customJobPosting.location.trim(),
+            requirements: [],
+          }),
+        })
+
+        if (!createResponse.ok) {
+          throw new Error('Unable to create the custom job posting.')
+        }
+
+        const createdJobPosting = await createResponse.json()
+        jobPostingId = createdJobPosting.id
+        setSelectedJobPostingId(createdJobPosting.id)
+        setJobPostings((current) => [createdJobPosting, ...current])
+      }
+
+      const formData = new FormData()
+      formData.append('jobPostingId', jobPostingId)
+
+      const resolvedJobDescriptionFile = jobDescriptionFile
+        ?? new File(
+          [jobDescriptionText.trim()],
+          'job-description.txt',
+          { type: 'text/plain' },
+        )
+
+      formData.append('jobDescriptionFile', resolvedJobDescriptionFile)
+
+      candidateFiles.forEach((file, index) => {
+        const baseName = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]+/g, ' ').trim()
+        const candidateName = baseName.length > 0 ? toTitleCase(baseName) : `Candidate ${index + 1}`
+        const candidateEmail = `candidate${index + 1}@example.com`
+
+        formData.append(`candidateCvs[${index}].candidateName`, candidateName)
+        formData.append(`candidateCvs[${index}].candidateEmail`, candidateEmail)
+        formData.append(`candidateCvs[${index}].cvFile`, file)
+      })
+
       const uploadResponse = await fetch(`${API_BASE_URL}/screening/batches`, {
         method: 'POST',
         body: formData,
@@ -247,22 +306,97 @@ function App() {
             <p className="card-kicker">Step 1</p>
             <h3>Upload Job Description</h3>
             <p>
-              Select the role being screened, then attach the job description file so candidate evaluation uses the right requirements.
+              Choose an existing job posting or create a custom one, then upload or paste the job description for screening.
             </p>
-            <label className="field-label" htmlFor="job-posting">Job Posting</label>
-            <select
-              id="job-posting"
-              className="form-select"
-              value={selectedJobPostingId}
-              onChange={(event) => setSelectedJobPostingId(event.target.value)}
-            >
-              <option value="">Select a job posting</option>
-              {jobPostings.map((jobPosting) => (
-                <option key={jobPosting.id} value={jobPosting.id}>
-                  {jobPosting.title}
-                </option>
-              ))}
-            </select>
+            <div className="mode-toggle">
+              <button
+                type="button"
+                className={`mode-toggle__button${jobPostingMode === 'existing' ? ' is-active' : ''}`}
+                onClick={() => setJobPostingMode('existing')}
+              >
+                Existing Job Posting
+              </button>
+              <button
+                type="button"
+                className={`mode-toggle__button${jobPostingMode === 'custom' ? ' is-active' : ''}`}
+                onClick={() => setJobPostingMode('custom')}
+              >
+                Custom Job Posting
+              </button>
+            </div>
+            {jobPostingMode === 'existing' ? (
+              <>
+                <label className="field-label" htmlFor="job-posting">Job Posting</label>
+                <select
+                  id="job-posting"
+                  className="form-select"
+                  value={selectedJobPostingId}
+                  onChange={(event) => setSelectedJobPostingId(event.target.value)}
+                >
+                  <option value="">Select a job posting</option>
+                  {jobPostings.map((jobPosting) => (
+                    <option key={jobPosting.id} value={jobPosting.id}>
+                      {jobPosting.title}
+                    </option>
+                  ))}
+                </select>
+              </>
+            ) : (
+              <div className="custom-job-grid">
+                <div>
+                  <label className="field-label" htmlFor="custom-title">Job Title</label>
+                  <input
+                    id="custom-title"
+                    className="form-input"
+                    type="text"
+                    value={customJobPosting.title}
+                    onChange={(event) =>
+                      setCustomJobPosting((current) => ({ ...current, title: event.target.value }))
+                    }
+                  />
+                </div>
+                <div>
+                  <label className="field-label" htmlFor="custom-department">Department</label>
+                  <input
+                    id="custom-department"
+                    className="form-input"
+                    type="text"
+                    value={customJobPosting.department}
+                    onChange={(event) =>
+                      setCustomJobPosting((current) => ({ ...current, department: event.target.value }))
+                    }
+                  />
+                </div>
+                <div>
+                  <label className="field-label" htmlFor="custom-location">Location</label>
+                  <input
+                    id="custom-location"
+                    className="form-input"
+                    type="text"
+                    value={customJobPosting.location}
+                    onChange={(event) =>
+                      setCustomJobPosting((current) => ({ ...current, location: event.target.value }))
+                    }
+                  />
+                </div>
+                <div>
+                  <label className="field-label" htmlFor="custom-years">Minimum Years Experience</label>
+                  <input
+                    id="custom-years"
+                    className="form-input"
+                    type="number"
+                    min="0"
+                    value={customJobPosting.minimumYearsExperience}
+                    onChange={(event) =>
+                      setCustomJobPosting((current) => ({
+                        ...current,
+                        minimumYearsExperience: event.target.value,
+                      }))
+                    }
+                  />
+                </div>
+              </div>
+            )}
             <label className="field-label" htmlFor="job-description-file">Job Description File</label>
             <input
               id="job-description-file"
@@ -271,8 +405,23 @@ function App() {
               accept=".pdf,.doc,.docx,.txt"
               onChange={(event) => setJobDescriptionFile(event.target.files?.[0] ?? null)}
             />
+            <label className="field-label" htmlFor="job-description-text">Paste Job Description</label>
+            <textarea
+              id="job-description-text"
+              className="form-textarea"
+              rows="6"
+              placeholder="Paste the job description here if you do not want to upload a file."
+              value={jobDescriptionText}
+              onChange={(event) => setJobDescriptionText(event.target.value)}
+            />
             <div className="mock-dropzone">
-              <span>{jobDescriptionFile ? `Selected: ${jobDescriptionFile.name}` : 'Attach the job description document'}</span>
+              <span>
+                {jobDescriptionFile
+                  ? `Selected file: ${jobDescriptionFile.name}`
+                  : jobDescriptionText.trim()
+                    ? 'Pasted job description will be used for screening.'
+                    : 'Attach the job description document or paste the text.'}
+              </span>
             </div>
           </article>
 
@@ -344,11 +493,28 @@ function App() {
         <div className="results-header">
           <div>
             <p className="card-kicker">Step 4</p>
-            <h3>Top 5 Ranked Candidates</h3>
+            <h3>Top {candidateDisplayCount} Ranked Candidates</h3>
           </div>
-          <p className="results-copy">
-            The recruiter can quickly review the first five candidates by match percentage, ranking position, and key gaps.
-          </p>
+          <div className="results-controls">
+            <p className="results-copy">
+              The recruiter can choose how many top candidates to review by match percentage, ranking position, and key gaps.
+            </p>
+            <label className="results-picker" htmlFor="candidate-count">
+              <span>Show top</span>
+              <select
+                id="candidate-count"
+                className="form-select form-select--compact"
+                value={candidateDisplayCount}
+                onChange={(event) => setCandidateDisplayCount(Number(event.target.value))}
+              >
+                {Array.from({ length: maxDisplayCount }, (_, index) => index + 1).map((count) => (
+                  <option key={count} value={count}>
+                    {count} candidate{count > 1 ? 's' : ''}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
         </div>
 
         <div className="candidate-results">
